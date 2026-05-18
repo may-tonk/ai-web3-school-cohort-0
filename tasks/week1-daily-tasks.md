@@ -1,172 +1,176 @@
-# Week 1 每日任务清单：连接数据
+# Week 1 每日任务清单
 
-> 目标：Dune 查询 Agent 原型 — 能用自然语言查询链上数据并返回结果
-
----
-
-## Day 1 — 启动日（今天）
-
-### 上午 2h
-- [ ] 阅读 Handbook “AI 基础 → LLM ” 相关章节
-- [ ] 学习 LLM 的 Tool Use 架构（Function Calling / Tools）
-- [ ] 学习笔记写入 `daily/2026-05-18.md`
-
-### 下午 2.5h
-- [ ] 创建项目目录 `chainmind/` 结构
-- [ ] 创建 `chainmind/core/data_source.py` 基础框架
-- [ ] 实现第一个函数：调用 Dune API 获取指定 query 结果
-- [ ] git commit
-
-### 晚上 1.5h
-- [ ] 完成 `daily/2026-05-18.md` 笔记整理
-- [ ] 检查 WCB 打卡入口，生成打卡草稿
-- [ ] 如果有 Handbook 问题 → 写入 `handbook-feedback/`
-- [ ] 推送代码到 GitHub
-
-### 交付物
-- `chainmind/core/data_source.py` 能调通 Dune API 的脚本
+> 日期：2026-05-18 — 2026-05-24
+> 主题：AI and Web3 foundations — 基础对齐 + 数据连接
+> 目标：Agent 能查询链上数据并返回结果，有最小可用版本。
 
 ---
 
-## Day 2 — 自然语言 → SQL
+## 一周总观
 
-### 上午 2h
-- [ ] 学习 Prompt Engineering 中的 "Text-to-SQL" 技术
-- [ ] 研究如何让 LLM 生成 Dune SQL 查询
-- [ ] 学习笔记写入 daily/
-
-### 下午 2.5h
-- [ ] 创建 `chainmind/core/query_builder.py`
-- [ ] 实现：LLM 接收自然语言 → 生成 SQL 查询
-- [ ] 测试 3 个不同的查询意图（如 TVL、交易量、流动性）
-- [ ] git commit
-
-### 晚上 1.5h
-- [ ] 整理测试结果，记录成功和失败的查询
-- [ ] 完成 daily 笔记
-- [ ] 打卡 + 推送
-
-### 交付物
-- `chainmind/core/query_builder.py` 能将自然语言转换为 SQL 的模块
+| 天 | 日期 | 主题 | 产出物 | 时长 |
+|---|---|---|---|---|
+| D1 | 5/18 (今日) | 启动 + LLM Tool Use 基础 | `daily/2026-05-18.md` + Agent 骨架 | 6h |
+| D2 | 5/19 | Agent 架构深入 | `chainmind/core/agent.py` 能跑通 | 6h |
+| D3 | 5/20 | Dune API 接入 | `chainmind/core/data_source.py` | 6h |
+| D4 | 5/21 | 自然语言 → SQL → 数据摘要 | experiments 脚本 | 6h |
+| D5 | 5/22 | Web3 基础接入（钱包+测试网） | 测试网交易记录 | 6h |
+| D6 | 5/23 | 合约调用基础 + 整合 | `experiments/week1-wallet/` | 6h |
+| D7 | 5/24 (周日) | 周复盘 + 打卡 | `experiments/week1-dune-agent/` 完整版 | 4h |
 
 ---
 
-## Day 3 — 数据解读
+## D1 | 5/18 (今日) — 启动 + LLM Tool Use 基础
 
-### 上午 2h
-- [ ] 学习如何让 LLM 解读 Dune 返回的结果
-- [ ] 了解"结果摘要" vs "详细解读"的不同策略
-- [ ] 学习笔记
+### 上午 3h — 开发
+- [ ] 创建 `chainmind/core/agent.py` 骨架（类级结构，支持接收指令、调用工具、返回结果）
+- [ ] 实现最小可运行的 ReAct 循环（思考 → 行动 → 观察）
+- [ ] git commit: `feat: init chainmind agent skeleton`
 
-### 下午 2.5h
-- [ ] 创建 `chainmind/core/analyzer.py`
-- [ ] 实现：接收 Dune 数据 → LLM 生成中文分析摘要
-- [ ] 测试：用实际的 Uniswap 流动性数据做实验
-- [ ] git commit
+### 下午 2h — 学习
+- [ ] 阅读 Handbook **LLM 章节** 和 **Tool Use 章节**
+- [ ] 重点：Function Calling vs ReAct vs JSON Mode 的差异和适用场景
+- [ ] 笔记写入 `daily/2026-05-18.md`
 
-### 晚上 1.5h
-- [ ] 整理分析结果，记录有趣的洞察
-- [ ] 完成 daily 笔记
-- [ ] 打卡 + 推送
-
-### 交付物
-- `chainmind/core/analyzer.py` 能解读数据并生成摘要的模块
+### 晚上 1h — 整理
+- [ ] 梳理 Agent 架构图（用文本或简单图）
+- [ ] 完成 `daily/2026-05-18.md` （包含学习心得 + 今日产出 + 明日计划）
+- [ ] 如果有 Handbook 反馈 → `handbook-feedback/`
+- [ ] git commit: `docs: day 1 learning notes`
 
 ---
 
-## Day 4 — 组装 Agent
+## D2 | 5/19 — Agent 架构深入
 
-### 上午 2h
-- [ ] 学习 ReAct 架构（Reasoning + Acting）
-- [ ] 理解 Agent 如何"思考" → "执行工具" → "观察结果"
-- [ ] 学习笔记
+### 上午 3h — 开发
+- [ ] 实现多工具支持（Dune 查询、日历、计算等 mock 工具）
+- [ ] 添加错误处理和重试机制
+- [ ] git commit: `feat: multi-tool support with retry`
 
-### 下午 2.5h
-- [ ] 创建 `chainmind/core/agent.py`
-- [ ] 将 data_source + query_builder + analyzer 组装成一个 Agent
-- [ ] 实现：用户输入 → Agent 查询 → 返回分析 → 记录交互
-- [ ] git commit
+### 下午 2h — 学习
+- [ ] 阅读 Handbook **Agent 架构** 相关章节
+- [ ] 重点：Memory 设计、Planning 策略、错误恢复
+- [ ] 笔记写入 `daily/2026-05-19.md`
 
-### 晚上 1.5h
-- [ ] 测试完整流程，记录 bug 和待优化点
-- [ ] 完成 daily 笔记
-- [ ] 打卡 + 推送
-
-### 交付物
-- `chainmind/core/agent.py` 完整的 Agent 主引擎
+### 晚上 1h — 整理
+- [ ] 运行第一个端到端测试："查询最近一周 Uniswap 交易量"
+- [ ] 记录测试结果和待解决问题
+- [ ] git commit: `test: first end-to-end agent test`
 
 ---
 
-## Day 5 — 优化与边界情况
+## D3 | 5/20 — Dune API 接入
 
-### 上午 2h
-- [ ] 学习错误处理：API 限流、查询失败、数据格式变化
-- [ ] 学习笔记
+### 上午 3h — 开发
+- [ ] 注册 Dune API Key（使用现有账户）
+- [ ] 实现 `chainmind/core/data_source.py`，封装 Dune API 调用
+- [ ] 支持两种模式：现成 Query ID 调用 + 新增 Query 提交
+- [ ] git commit: `feat: dune api integration`
 
-### 下午 2.5h
-- [ ] 实现错误处理机制（重试、降级、用户提示）
-- [ ] 测试各种边界情况（空数据、超时、无效查询）
-- [ ] git commit
+### 下午 2h — 学习
+- [ ] 学习 Dune API 文档（重点是程序化调用）
+- [ ] 回顾自己以前的 Dune 查询，选出 3 个最适合 Agent 的查询
+- [ ] 笔记写入 `daily/2026-05-20.md`
 
-### 晚上 1.5h
-- [ ] 写 Week 1 复盘笔记
-- [ ] 完成 daily 笔记
-- [ ] 打卡 + 推送
-
-### 交付物
-- 稳健的 Agent 原型，能处理常见错误
-
----
-
-## Day 6 — 测试与文档
-
-### 上午 2h
-- [ ] 学习 Python 测试基础（pytest）
-- [ ] 学习笔记
-
-### 下午 2.5h
-- [ ] 编写 `chainmind/tests/test_core.py`
-- [ ] 测试各个模块的核心功能
-- [ ] 撰写 `chainmind/README.md` 设计文档
-- [ ] git commit
-
-### 晚上 1.5h
-- [ ] 运行测试，修复发现的问题
-- [ ] 完成 daily 笔记
-- [ ] 打卡 + 推送
-
-### 交付物
-- 完整的测试 + 项目设计文档
+### 晚上 1h — 整理
+- [ ] 测试 Dune 连接稳定性（并发、超时、错误格式）
+- [ ] 记录测试数据和发现
+- [ ] git commit: `test: dune connection stress test`
 
 ---
 
-## Day 7 — 周复盘
+## D4 | 5/21 — 自然语言 → SQL → 数据摘要
 
-### 上午 2h
-- [ ] 复盘本周学习内容，整理知识点
-- [ ] 更新 `learning-plan.md` 进度
+### 上午 3h — 开发
+- [ ] 实现"自然语言 → SQL" 转换层（用 prompt 或简单模板）
+- [ ] 实现数据摘要生成（用 LLM 把原始数据转为人话）
+- [ ] git commit: `feat: nl-to-sql and data summarization`
 
-### 下午 2.5h
-- [ ] 给 Agent 添加一个"小惊喜"功能（例如：支持更多协议、图表生成、多轮对话）
-- [ ] git commit
+### 下午 2h — 学习
+- [ ] 阅读 Handbook **链上数据分析** 或 **Dune 高级查询**
+- [ ] 重点：如何让 AI 理解"链上数据的脆弱性"
+- [ ] 笔记写入 `daily/2026-05-21.md`
 
-### 晚上 1.5h
+### 晚上 1h — 整理
+- [ ] 完成第一个完整流程测试：用自然语言查询 → 获取数据 → 生成摘要
+- [ ] 记录结果到 `experiments/week1-nl-to-sql/`
+- [ ] git commit: `experiments: week1 nl-to-sql pipeline`
+
+---
+
+## D5 | 5/22 — Web3 基础接入（钱包+测试网）
+
+### 上午 3h — 开发
+- [ ] 准备测试钱包（MetaMask），记录地址
+- [ ] 完成测试网（Sepolia / Holesky）第一笔交易
+- [ ] 学习如何用 Etherscan API 获取交易详情
+- [ ] git commit: `feat: testnet wallet setup`
+
+### 下午 2h — 学习
+- [ ] 阅读 Handbook **钱包、签名与交易**
+- [ ] 重点：如何在 Agent 中安全地与钱包交互（不暴露私钥）
+- [ ] 笔记写入 `daily/2026-05-22.md`
+
+### 晚上 1h — 整理
+- [ ] 整理测试网交易记录（地址、交易 hash、gas 花费）
+- [ ] 封装一个简单的 RPC 调用工具（查余额、查交易）
+- [ ] git commit: `feat: basic rpc tooling`
+
+---
+
+## D6 | 5/23 — 合约调用基础 + 整合
+
+### 上午 3h — 开发
+- [ ] 学习 web3.py / ethers.js 合约调用基础
+- [ ] 实现一个简单的合约调用工具（例如查询 Uniswap Factory 中某个 token pair）
+- [ ] 把合约调用整合到 Agent 工具集
+- [ ] git commit: `feat: contract call tool integration`
+
+### 下午 2h — 学习
+- [ ] 阅读 Handbook **智能合约基础** 或 **权限与安全**
+- [ ] 重点：Agent 的权限边界（什么可以自动执行，什么必须人工确认）
+- [ ] 笔记写入 `daily/2026-05-23.md`
+
+### 晚上 1h — 整理
+- [ ] 运行综合测试：Agent 能同时查询 Dune 数据和链上状态
+- [ ] 整理 `experiments/week1-wallet/`
+- [ ] git commit: `test: week1 integration test`
+
+---
+
+## D7 | 5/24 (周日) — 周复盘 + 打卡
+
+### 上午 2h — 开发
+- [ ] 整合 Week 1 所有代码，确保 `experiments/week1-dune-agent/` 完整可运行
+- [ ] 编写 Week 1 README（怎么跑、依赖、演示流程）
+- [ ] git commit: `feat: week1 complete dune agent`
+
+### 下午 1h — 学习
+- [ ] 回顾本周 Handbook 笔记，补充遗漏
+- [ ] 预览 Week 2 课程内容，做好心理准备
+- [ ] 笔记写入 `daily/2026-05-24.md`
+
+### 晚上 1h — 整理
 - [ ] 撰写 Week 1 学习总结
-- [ ] 检查所有交付物是否完整
-- [ ] 完成 daily 笔记
-- [ ] 打卡 + 推送
-
-### 交付物
-- Week 1 复盘报告
-- 更新后的仓库
+- [ ] 生成本周打卡草稿（用 WCB API 提交证据）
+- [ ] git commit: `docs: week1 summary and reflection`
 
 ---
 
-## ⚠️ 安全红线
+## 周末产出物检查清单
 
-- **私钥不上链**：不要在代码中 hardcode 任何密钥、API key、钱包私钥
-- **交易不自动执行**：Agent 仅限于查询和分析，不要添加自动交易功能
-- **测试网优先**：所有涉及真实链的测试都在测试网进行
+- [ ] `chainmind/core/agent.py` — 能跑通的 Agent 主引擎
+- [ ] `chainmind/core/data_source.py` — Dune API 调用封装
+- [ ] `experiments/week1-dune-agent/` — 完整可运行的演示脚本
+- [ ] `experiments/week1-wallet/` — 钱包+测试网记录
+- [ ] `daily/` — 7 天学习笔记
+- [ ] `至少 7 个 git commit`
+- [ ] 本周打卡已提交（或草稿已准备）
 
 ---
-*Created: 2026-05-18*
+
+## 紧急联系
+
+- 如果任何一天落后 > 4h，立即通知 Agent 调整后续计划
+- 如果遇到技术卡住 > 2h，先记录问题 → 跳过 → 晚上回头解决
+- 每天晚上 23:00 前必须 git push
