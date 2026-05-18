@@ -1,25 +1,55 @@
 # Learner Profile
 
-## Basics
+## 👤 Basics
 - **AI Level**: 有基础
-- **Web3 Level**: (待确认)
-- **Programming**: 会基础脚本
+- **Web3 Level**: 系统学习过，具备实战能力
+- **Programming**: 会基础脚本，可独立完成自动化任务
 - **Daily Commitment**: 6 小时
 - **Language Preference**: 中文
-- **Goal Direction**: (待确认)
+- **Goal Direction**: 开发 + 研究双轨
 
-## Background Notes
-- 具备 AI 基础认知，了解大模型基本概念
-- 具备编程脚本能力，可独立完成基础自动化任务
-- 每日可投入较多时间（6h），适合深度学习 + 实践并行的节奏
+## 📝 Background & Skills
 
-## Learning Goals
-- [ ] 系统掌握 AI × Web3 交叉领域知识
-- [ ] 完成 Bootcamp 全部任务和打卡
-- [ ] 产出可开源的学习笔记和实验代码
-- [ ] (根据方向补充)
+### AI 能力
+- 具备 AI 基础认知，了解大模型基本概念与提示工程
+- 可以使用 AI 工具提升效率
 
-## Preferred Workflow
-1. 早上：阅读当日课程 + 制定任务清单
-2. 下午/晚上：实践 + 笔记整理 + 打卡
-3. 周期性：回顾 learning-plan，调整节奏
+### Web3 能力
+- **智能合约开发**: 熟悉 Solidity，掌握 Foundry / Hardhat / Remix 开发流
+- **链上分析**: 使用 Dune 等工具进行数据分析
+- **生态理解**: 系统学习并了解 Web3 生态
+
+### 编程能力
+- 可以写基础脚本，能够完成自动化任务
+- 具备一定的工程化能力
+
+## 🎯 Learning Interests & Goals
+
+### 核心兴趣点
+1. **链上数据分析** — 用 AI 增强链上数据的获取、处理和洞察
+2. **AI + DeFi** — 探索去中心化金融与人工智能的交叉创新
+3. **AI Agent 开发** — 构建能与区块链交互的智能代理
+
+### 学习目标
+- [ ] 深入掌握 AI × Web3 交叉领域的核心架构
+- [ ] 构建至少1个完整的 AI + Web3 Agent 项目
+- [ ] 产出多份链上数据分析报告（AI 增强）
+- [ ] 完成 AI + DeFi 方向的深度研究与实验
+- [ ] 在 Handbook 中沉淀可复盘的学习记录与反馈
+- [ ] 参与 Hackathon 或完成 Bootcamp 结业项目
+
+## ⚡ Preferred Workflow（6 小时版）
+
+| 时段 | 内容 | 时长 | 产出物 |
+|------|------|------|---------|
+| 上午 | 课程学习 / 新概念消化 | 2h | 学习笔记、理论总结 |
+| 下午 | 开发实践 / 代码 / 实验 | 2.5h | 代码 commit、实验记录 |
+| 晚上 | 数据分析 / 笔记整理 / 打卡 | 1.5h | 分析报告、daily note、feedback |
+
+## 📝 Notes
+- 每日 6 小时是核心优势，可同时推进开发 + 研究两条线
+- 偏好"学习 → 实践 → 反馈"的快速迭代节奏
+- 有经验经常用的时候，偏好在 Telegram 聊天
+
+---
+*Last updated: 2026-05-18*
