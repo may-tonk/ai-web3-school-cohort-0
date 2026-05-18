@@ -1,55 +1,72 @@
 # Learner Profile
 
-## 👤 Basics
-- **AI Level**: 有基础
-- **Web3 Level**: 系统学习过，具备实战能力
-- **Programming**: 会基础脚本，可独立完成自动化任务
-- **Daily Commitment**: 6 小时
-- **Language Preference**: 中文
-- **Goal Direction**: 开发 + 研究双轨
+## ✅ 已确认画像
 
-## 📝 Background & Skills
+| 维度 | 确认内容 |
+|------|---------|
+| **AI 基础** | 有基础 |
+| **Web3 基础** | 系统学习过，熟练 Solidity / Foundry / Hardhat / Remix / Dune |
+| **编程能力** | 会基础脚本，可独立完成自动化任务 |
+| **每日投入** | 6 小时 |
+| **输出语言** | 中文 |
+| **第一优先级** | **B — 产出可展示的个人项目，建立难以复制的个人品牌** |
+| **核心竞争力** | **A — Dune 链上数据能力** |
+| **执行风格** | **A — 每日明确任务清单，严格按计划执行** |
 
-### AI 能力
-- 具备 AI 基础认知，了解大模型基本概念与提示工程
-- 可以使用 AI 工具提升效率
+## 🎯 项目主线
 
-### Web3 能力
-- **智能合约开发**: 熟悉 Solidity，掌握 Foundry / Hardhat / Remix 开发流
-- **链上分析**: 使用 Dune 等工具进行数据分析
-- **生态理解**: 系统学习并了解 Web3 生态
+**项目名称：ChainMind — DeFi 智能研究助手**
 
-### 编程能力
-- 可以写基础脚本，能够完成自动化任务
-- 具备一定的工程化能力
+### 一句话定位
+能查询链上数据、解读 DeFi 协议状态、生成可验证分析报告的 AI Agent。
 
-## 🎯 Learning Interests & Goals
+### 为什么难以复制
+- **数据壁垒**：大多数学员不懂 Dune，不懂链上数据的"脆弱性"
+- **领域壁垒**：懂 AI 的人不懂 DeFi 机制，懂 DeFi 的人不会搭 Agent 框架
+- **可验证壁垒**：大多数"DeFi Agent"是聊天机器人，你的是"数据驱动 + 可追溯报告"
 
-### 核心兴趣点
-1. **链上数据分析** — 用 AI 增强链上数据的获取、处理和洞察
-2. **AI + DeFi** — 探索去中心化金融与人工智能的交叉创新
-3. **AI Agent 开发** — 构建能与区块链交互的智能代理
+### 核心能力
+1. 自然语言查询链上数据（取代手写 SQL）
+2. 实时监控并解读 DeFi 异常事件
+3. 生成带数据来源引用的研究报告
+4. 支持多协议横向对比分析
 
-### 学习目标
-- [ ] 深入掌握 AI × Web3 交叉领域的核心架构
-- [ ] 构建至少1个完整的 AI + Web3 Agent 项目
-- [ ] 产出多份链上数据分析报告（AI 增强）
-- [ ] 完成 AI + DeFi 方向的深度研究与实验
-- [ ] 在 Handbook 中沉淀可复盘的学习记录与反馈
-- [ ] 参与 Hackathon 或完成 Bootcamp 结业项目
+## ⚡ 每日节奏（6 小时精确分配）
 
-## ⚡ Preferred Workflow（6 小时版）
-
-| 时段 | 内容 | 时长 | 产出物 |
+| 时段 | 时长 | 内容 | 产出要求 |
 |------|------|------|---------|
-| 上午 | 课程学习 / 新概念消化 | 2h | 学习笔记、理论总结 |
-| 下午 | 开发实践 / 代码 / 实验 | 2.5h | 代码 commit、实验记录 |
-| 晚上 | 数据分析 / 笔记整理 / 打卡 | 1.5h | 分析报告、daily note、feedback |
+| 上午 | 2h | 学习 / 课程 / 架构理解 | 学习笔记 → daily/ |
+| 下午 | 2.5h | 开发 / 代码 / 实验 | ≥1 个 git commit |
+| 晚上 | 1.5h | 分析 / 整理 / 打卡 / 反馈 | 每天必须有一件"可被他人看到的产出物" |
 
-## 📝 Notes
-- 每日 6 小时是核心优势，可同时推进开发 + 研究两条线
-- 偏好"学习 → 实践 → 反馈"的快速迭代节奏
-- 有经验经常用的时候，偏好在 Telegram 聊天
+## 📁 仓库产出结构
+
+```
+chainmind/                   # 项目主目录
+  ├── core/
+  │   ├── agent.py         # Agent 主引擎
+  │   ├── data_source.py   # 数据接入层
+  │   └── analyzer.py      # 分析模块
+  ├── protocols/
+  │   ├── uniswap_v3.py  # Uniswap V3 分析器
+  │   ├── aave_v3.py     # Aave V3 分析器
+  │   └── base.py          # 协议接口基类
+  ├── reports/
+  └── tests/
+experiments/                 # 实验记录
+submissions/                 # 最终交付物
+```
+
+## 🔧 技术栈
+
+| 类别 | 工具 |
+|------|------|
+| AI 框架 | LangChain / LangGraph, OpenAI API / 本地 LLM |
+| Web3 | Dune API, The Graph, Alchemy/Infura, Ethers.js/Viem |
+| 合约 | Foundry (验证用), Solidity (阅读用) |
+| 后端 | Python (async, 类型系统) |
+| 前端 | Streamlit / Gradio (MVP 阶段) |
+| 部署 | Vercel / Railway / 本地 Docker |
 
 ---
 *Last updated: 2026-05-18*

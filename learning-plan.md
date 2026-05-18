@@ -1,171 +1,183 @@
 # AI × Web3 School Learning Plan
 
-> 基于学员画像定制：AI 有基础 / Web3 熟练开发者 / 开发+研究双轨 / 每日 6h
-> 核心兴趣：链上数据分析、AI + DeFi、AI Agent 开发
-
-## 🎯 学习策略
-
-由于已具备扎实的 Web3 开发基础（Solidity / Foundry / Hardhat / Dune），本计划**不重复入门内容**，以下为核心策略：
-
-1. **Bridge 优先**: 重点突破 AI 与 Web3 的交叉领域
-2. **双轨并行**: 上午/下午开发，晚上研究分析，两条线同步推进
-3. **以用驱学**: 每个概念都尽快落地为代码或分析报告
-4. **开源沉淀**: 所有产出物默认入仓，作为 Proof-of-Work
+> 学员画像：Web3 开发熟练工程师 / Dune 高级用户 / 6h 每天
+> 核心目标：**B — 产出可展示的个人项目，建立难以复制的个人品牌**
+> 核心竞争力：**A — Dune 链上数据能力**
+> 执行风格：**A — 每日明确任务清单，严格按计划执行**
+> 项目主线：**构建能理解链上数据的 DeFi 研究 Agent**
 
 ---
 
-## Phase 1: AI × Web3 核心对齐（第 1-2 周）
+## 🎯 项目定义：ChainMind — DeFi 智能研究助手
 
-### 目标
-建立 AI 与 Web3 交叉领域的完整知识框架，将已有技能链接到 AI Agent 和链上分析。
+### 一句话描述
+一个能查询链上数据、解读 DeFi 协议状态、生成可验证分析报告的 AI Agent。
 
-### 学习内容
+### 为什么难以复制
+- **数据壁垒**：大多数学员不懂 Dune，不懂链上数据的"脆弱性"（滚回、滞后、粒度问题）
+- **领域壁垒**：懂 AI 的人不懂 DeFi 机制，懂 DeFi 的人不会搭 Agent 框架
+- **可验证壁垒**：大多数"DeFi Agent" 是聊天机器人，你的是"数据驱动 + 可追溯报告"
 
-#### 1.1 LLM 进阶（不是入门，是架构层）
-- [ ] AI Agent 架构深度解析：ReAct、CoT、Tool Use、Planning
-- [ ] 本地 LLM 部署与 API 管理（Ollama / vLLM）
-- [ ] 上下文管理与长上下文方案（RAG、外部记忆）
-- [ ] 多 Agent 协作架构（CrewAI / AutoGen 等）
-
-#### 1.2 AI × Web3 Bridge
-- [ ] 链上数据如何作为 LLM 的 Context：Dune API、The Graph、节点 RPC 数据拉取
-- [ ] 智能合约作为 AI 的 Tool：读取、解析、执行合约交互
-- [ ] 链上/链下事件如何触发 Agent 行为
-- [ ] 链上证明（Proof of X）与 AI 结合场景
-
-#### 1.3 链上数据 + AI 基础
-- [ ] Dune API 进阶：从 SQL 查询到程序化拉取
-- [ ] 链上数据的 NLP 处理：交易记录、日志解析
-- [ ] 用 LLM 解读链上事件：交易模式识别、异常检测
-
-### 交付物
-- [ ] `experiments/phase1/agent-tool-use/` — 一个能查询链上数据的基础 Agent
-- [ ] `experiments/phase1/chain-context/` — LLM 解读链上交易的实验
-- [ ] `handbook-feedback/phase1.md` — 学习过程中的问题与反馈
+### 核心能力
+1. 自然语言查询链上数据（取代手写 SQL）
+2. 实时监控并解读 DeFi 异常事件
+3. 生成带数据来源引用的研究报告
+4. 支持多协议横向对比分析
 
 ---
 
-## Phase 2: 双轨深度实践（第 3-5 周）
+## 📁 仓库产出结构
 
-### 开发轨：AI + Web3 Agent 工程化
+以下是 8 周后你的 repo 应该包含的内容，也是每天的指北：
 
-#### 2.1 Web3 Agent 核心开发
-- [ ] 链上数据查询 Agent：钱包、交易、合约状态实时查询
-- [ ] 分析 Agent：流动性分析、指标监控、异常预警
-- [ ] 交易辅助 Agent：气费优化、滑点计算、路径分析
-- [ ] 开发自己的 Agent 框架或工具链
-
-#### 2.2 AI + DeFi 工程实践
-- [ ] DeFi 协议接口与 AI 的对接（Aave、Uniswap、Compound）
-- [ ] 用 LLM 解读 DeFi 策略并生成可执行建议
-- [ ] 构建“DeFi 研究助手”Agent
-- [ ] 实验 AI 驱动的合约逻辑原型
-
-### 研究轨：深度分析与报告
-
-#### 2.3 链上数据分析研究
-- [ ] 主流公链数据样本分析（ETH、L2、其他 L1）
-- [ ] 指定协议的深度数据挖掘（如 Uniswap V3 流动性分析）
-- [ ] 用 AI 辅助生成数据可视化与洞察报告
-- [ ] 建立可复用的分析模板和 SQL 库
-
-#### 2.4 AI + DeFi 机制研究
-- [ ] AI 在 DeFi 中的应用场景地图（预测、风控、自动化、治理）
-- [ ] 代表性项目案例研究（Giza、Bittensor、？）
-- [ ] 风险与挑战：读取性、欺骗性、中心化陷阱
-- [ ] 产出研究报告 `submissions/ai-defi-research-report.md`
-
-### 交付物
-- [ ] `experiments/phase2/web3-agent/` — 完整 Agent 项目代码
-- [ ] `submissions/on-chain-analysis-report-1.md` — 链上分析研究报告
-- [ ] `submissions/ai-defi-research-report.md` — AI + DeFi 深度研究
-
----
-
-## Phase 3: 整合交付与突破（第 6-8 周）
-
-### 开发轨：完整项目
-
-#### 3.1 终极项目选题（根据兴趣二选一或融合）
-- **选项 A**: AI-powered 链上分析 Dashboard
-  - 实时链上数据接入 + LLM 解读 + 可视化展示
-  - 可监控多个协议，支持自然语言查询
-- **选项 B**: DeFi 研究助手 Agent
-  - 多协议数据聚合、策略分析、风险预警
-  - 支持用自然语言生成研究报告
-
-#### 3.2 项目工程化
-- [ ] 前后端架构设计
-- [ ] 测试覆盖与文档
-- [ ] 开源发布准备（README、License、Demo）
-- [ ] 部署上线或 Demo 视频
-
-### 研究轨：深度输出
-
-#### 3.3 研究成果巩固
-- [ ] 基于 Phase 2 报告，产出更完整的系列分析
-- [ ] 尝试向 Handbook 提交修改建议或新增章节
-- [ ] 撰写技术博客或 Twitter 线程分享
-
-#### 3.4 Hackathon / Bootcamp 结业
-- [ ] 组队或个人参赛
-- [ ] 完成项目提交与演示
-- [ ] 学习总结与复盘
-
-### 交付物
-- [ ] `hackathon/` — Hackathon 项目材料
-- [ ] `submissions/final-project/` — 终极项目
-- [ ] `submissions/learning-summary.md` — 完整学习复盘
+```
+ai-web3-school-cohort-0/
+├── README.md                    # 项目介绍 + Demo 链接
+├── profile.md                   # 学员画像
+├── learning-plan.md             # 本文件
+├── chainmind/                   # 项目主目录
+│   ├── README.md                # 项目设计文档
+│   ├── core/
+│   │   ├── agent.py           # Agent 主引擎
+│   │   ├── data_source.py     # 数据接入层
+│   │   └── analyzer.py        # 分析模块
+│   ├── protocols/
+│   │   ├── uniswap_v3.py    # 协议特定分析器
+│   │   ├── aave_v3.py
+│   │   └── base.py            # 协议接口基类
+│   ├── reports/
+│   │   └── template.md        # 报告生成模板
+│   └── tests/
+│       └── test_core.py       # 测试
+├── experiments/                 # 实验记录
+├── submissions/
+│   ├── research/
+│   └── demo-video.md
+├── daily/                       # 每日学习笔记
+├── handbook-feedback/           # 手册反馈
+└── templates/
+    ├── daily-note.md
+    └── task-note.md
+```
 
 ---
 
-## 📅 Daily Rhythm（6 小时版）
+## 📅 时间线：8 周精确路径
 
-| 时段 | 内容 | 时长 | 产出物 | 轨道 |
-|------|------|------|---------|------|
-| 上午 | 课程学习 / 新概念消化 | 2h | 学习笔记、理论总结 | 开发+研究 |
-| 下午 | 开发实践 / 代码 / Agent 调试 | 2.5h | Git commit、实验记录 | 🛠️ 开发轨 |
-| 晚上 | 链上数据分析 / 笔记整理 / 打卡 | 1.5h | 分析报告、daily note、feedback | 📊 研究轨 |
+### Phase 1：基础对齐 — 第 1-2 周
+>目标：Agent 能查询链上数据并返回结果，有最小可用版本。
 
-### 每周节奏
-- **周一**: 宊整复盘上周，调整本周任务
-- **周五**: 开发轨 Milestone 验证（Agent 能力检查）
-- **周日**: 研究轨深度输出（报告 / 分析）
+**Week 1: 连接数据**
+- 学习 LLM 的 Tool Use 架构
+- 搭建 Dune API 调用层
+- 实现：自然语言 → SQL → 数据 → 文本摘要
+- 交付：`experiments/week1-dune-agent/` 能跑通的脚本
+
+**Week 2: 解读数据**
+- 学习 AI Agent 的 ReAct / Planning 架构
+- 让 Agent 不仅仅"查到数据"，还能"解释数据意义"
+- 交付：`chainmind/core/` 基础架构 + 第一个分析模块
+
+### Phase 2: 双轨深度 — 第 3-5 周
+>目标：多协议支持 + AI+DeFi 研究深度报告。
+
+**Week 3: 多协议支持**
+- 实现 Uniswap V3 分析器（流动性、价格区间、手续费）
+- 实现 Aave V3 分析器（清算、借贷率、风险参数）
+- 交付：`chainmind/protocols/` 协议模块
+
+**Week 4: 研究输出**
+- 用自己的 Agent 生成第一份 DeFi 协议分析报告
+- 产出研究文章 / Twitter 线程
+- 交付：`submissions/research/report-1.md`
+
+**Week 5: 产品化**
+- 添加实时监控能力（定时任务 / 事件触发）
+- 添加报告生成模板（Markdown / PDF 输出）
+- 交付：可定时运行的完整 Agent
+
+### Phase 3: 整合交付 — 第 6-8 周
+>目标：完整项目 + 开源发布准备。
+
+**Week 6: 工程化**
+- 前端界面（Streamlit / Gradio 快速搭建）
+- 错误处理、重试机制、日志
+- 交付：可交互的 Web 界面
+
+**Week 7: 研究深度**
+- 选择一个 DeFi 细分方向做深度研究（AI 清算预测 / MEV 分析 / 治理建议）
+- 用 Agent 辅助生成研究报告
+- 交付：深度研究报告
+
+**Week 8: 发布与复盘**
+- 开源发布准备（README、License、Demo 视频）
+- 撰写项目介绍博客 / Twitter 线程
+- 学习总结与复盘
+- 交付：完整项目 + 可展示的作品集
+
+---
+
+## ⚡ 每日节奏模板（6 小时）
+
+### 上午 2h — 学习 & 结构
+```
+任务类型：读 Handbook / 看课程 / 学新架构
+产出要求：学习笔记写入 daily/YYYY-MM-DD.md
+关键原则：不只是"看完"，要写出"如何应用到 ChainMind 项目中"
+```
+
+### 下午 2.5h — 开发 & 实践
+```
+任务类型：写代码 / 调试 Agent / 测试 Dune 查询
+产出要求：至少 1 个 git commit
+关键原则：代码可以是粗糙的，但必须能跑通或有明确的待解决问题
+```
+
+### 晚上 1.5h — 分析 & 整理
+```
+任务类型：链上数据分析 / 笔记整理 / 打卡 / 反馈
+产出要求：
+  - daily note 完整
+  - 如果有数据分析结果→写入 experiments/
+  - 如果有 Handbook 问题→写入 handbook-feedback/
+  - 生成打卡草稿
+关键原则：每天必须有一件"可被他人看到的产出物"
+```
 
 ---
 
 ## 📋 核心原则
 
-1. **Proof of Work**: 每天产出可公开的笔记、代码或分析
-2. **双轨并行**: 不要等开发完成才做研究，同时推进
-3. **Feedback Loop**: 遇到问题立即记录到 `handbook-feedback/`
-4. **Consistency**: 6 小时是优势，保持节奏比突击更重要
-5. **开源心态**: 所有学习过程默认可被他人查看和引用
-6. **用于实战**: 每个理论概念都要在 48h 内落地为代码或分析
+1. **项目驱动**：所有学习都应该回答"这对 ChainMind 有什么帮助"
+2. **48h 落地**：每个新概念学完 48h 内必须有代码 commit
+3. **每日交付**：每天结束时 repo 必须比昨天早上更丰富
+4. **数据为核**：每个决策、每份报告都必须有链上数据支撑
+5. **可复现**：所有分析结果必须注明数据来源和查询时间
+6. **安全红线**：私钥不上链、交易不自动执行、测试网优先
 
 ---
 
-## 🔧 工具链（预设）
+## 📊 进度跟踪模板
 
-| 类别 | 工具 |
+| 周次 | 里程碑 | 状态 | 备注 |
+|------|--------|------|------|
+| W1 | Dune 查询 Agent 原型 | ⬜ | |
+| W2 | 数据解读 + 分析模块 | ⬜ | |
+| W3 | 多协议支持 | ⬜ | |
+| W4 | 第一份研究报告 | ⬜ | |
+| W5 | 实时监控 + 报告生成 | ⬜ | |
+| W6 | Web 界面 + 工程化 | ⬜ | |
+| W7 | 深度研究 | ⬜ | |
+| W8 | 开源发布 + 复盘 | ⬜ | |
+
+---
+
+## 📝 更新日志
+
+| 日期 | 变更 |
 |------|------|
-| 开发 | Python, TypeScript, Solidity |
-| AI 框架 | LangChain / LangGraph, CrewAI, 自定义 Agent |
-| Web3 | Foundry, Hardhat, Ethers.js/Viem, Alchemy/Infura |
-| 数据 | Dune API, The Graph, 自定义 Subgraph |
-| 部署 | Vercel, Railway, AWS / 本地 Docker |
-| 协作 | GitHub, WCB Learning, Telegram |
+| 2026-05-18 | 初始版学习计划 |
+| 2026-05-18 | 重写为项目驱动版，明确主线为 ChainMind Agent |
 
 ---
-
-## 📊 进度跟踪
-
-| Phase | 状态 | 开始日期 | 结束日期 | 关键交付物 |
-|-------|------|---------|---------|------------|
-| Phase 1 | 🔴 待开始 | - | - | Agent 原型 + 链上数据实验 |
-| Phase 2 | ⚪ 待开始 | - | - | 完整 Agent + 研究报告 |
-| Phase 3 | ⚪ 待开始 | - | - | 终极项目 + 学习复盘 |
-
----
-*Last updated: 2026-05-18*
 *Next review: 每周一更新进度*
