@@ -1,7 +1,7 @@
 # AI × Web3 School - Personal Learning Journal
 
 > 学员：web3小虾米（Justin Li / @may-tonk）
-> 项目：**ChainMind — 能理解链上数据、生成可验证报告的 DeFi 研究 Agent**
+> 项目：**ChainMind — 链上行为风险过滤与可复制聪明钱研究系统**
 > 课程：[AI × Web3 School](https://aiweb3.school/zh/handbook/) | 4 周 Bootcamp（2026-05-18 → 2026-06-14）
 > 官方平台：[WCB Program](https://web3career.build/zh/programs/AI-Web3-School)
 
@@ -13,15 +13,44 @@
 
 **具体目标：**
 1. 搭建最小可运行的 ReAct Agent 框架（能接收指令、选择工具、返回结果）
-2. 实现 Dune API 调用封装，支持自然语言 → SQL → 数据 → 摘要
-3. 完成测试钱包准备 + 测试网交易
+2. 实现 Dune API 调用封装，支持固定 SQL 模板 → 数据 → 风险摘要
+3. 完成 BNB meme token 风险过滤指标模板：早期买家、买卖盘、同 funder、刷量迹象
 4. 每日产出学习笔记和至少 1 个 git commit
 
 **交付物：**
 - `chainmind/core/agent.py` — Agent 主引擎骨架
 - `chainmind/core/data_source.py` — Dune 数据接入层
-- `experiments/week1-dune-agent/` — 可运行的完整演示
+- `experiments/week1-risk-filter/` — BNB meme 风险过滤最小演示
+- `hackathon/chainmind/` — ChainMind 项目拆分文档与执行路线
 - `daily/` — 7 天学习笔记
+
+---
+
+## 🧭 当前项目定位
+
+ChainMind 暂不做“AI 自动投资”或泛化行情看板，而是聚焦为：
+
+> 链上行为风险过滤 + 可复制聪明钱观察 + AI 研究解释系统。
+
+第一阶段优先解决三个问题：
+
+1. 快速排除疑似刷量、内盘、出货、同实体分仓的 meme token。
+2. 区分“高胜率钱包”和“普通用户仍可复制的钱包”。
+3. 让 AI 基于结构化指标生成可复盘的研究解释，而不是直接预测涨跌。
+
+核心分层：
+
+```text
+Token Risk Filter
+        ↓
+Entity Detection Layer
+        ↓
+Wallet Quality / Copyability Layer
+        ↓
+AI Explanation Layer
+        ↓
+Daily Review Loop
+```
 
 ---
 

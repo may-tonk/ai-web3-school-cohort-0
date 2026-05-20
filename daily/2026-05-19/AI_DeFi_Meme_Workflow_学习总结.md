@@ -3,6 +3,18 @@
 日期：2026-05-19  
 主题：通过链上数据、地址跟踪、高胜率钱包分析、Dune/API/Hermes 工作流，辅助 meme 代币研究与投资决策。
 
+> 项目执行文档已拆分到 `hackathon/chainmind/`：
+> - `README.md`：文档索引
+> - `01-positioning-and-boundaries.md`：项目定位与边界
+> - `02-system-architecture-workflow.md`：系统架构与 Workflow
+> - `03-scoring-models.md`：评分体系
+> - `04-wallet-entity-detection.md`：钱包与同实体识别
+> - `05-dune-analysis-playbook.md`：Dune 分析模板
+> - `06-ai-hermes-reporting.md`：AI 报告与 Hermes 推送
+> - `07-mvp-roadmap.md`：MVP 路线图
+> - `08-risks-and-mitigations.md`：难点与解决方案
+> - `09-references.md`：参考资料
+
 ---
 
 ## 1. 今天讨论的核心方向
@@ -1524,4 +1536,3 @@ AI 只负责解释和总结
 一句话总结：
 
 > 我们要做的是一个基于链上行为的 meme 机会与风险过滤系统，而不是普通行情工具，也不是 AI 自动投资机器人。
-

@@ -1,0 +1,12 @@
+app:
+  name: ChainMind
+  environment: local
+
+paths:
+  runtime_dir: runtime
+  report_dir: runtime/reports
+  sample_token_dir: samples/tokens
+
+analysis:
+  default_chain: bnb
+  default_report_format: markdown

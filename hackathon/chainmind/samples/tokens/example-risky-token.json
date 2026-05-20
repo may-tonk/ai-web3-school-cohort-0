@@ -1,0 +1,58 @@
+{
+  "token": {
+    "address": "0x0000000000000000000000000000000000000002",
+    "symbol": "RISK",
+    "chain": "bnb",
+    "created_at": "2026-05-20T10:00:00Z"
+  },
+  "market": {
+    "liquidity_usd": 12000,
+    "volume_5m_usd": 9000,
+    "volume_1h_usd": 70000,
+    "holder_count": 210
+  },
+  "flow_5m": [
+    {
+      "bucket": "2026-05-20T10:05:00Z",
+      "trades": 260,
+      "unique_traders": 21,
+      "buyers": 9,
+      "sellers": 16,
+      "buy_volume_usd": 2500,
+      "sell_volume_usd": 8400,
+      "net_buy_usd": -5900
+    }
+  ],
+  "early_buyers": [
+    {
+      "wallet": "0x2000000000000000000000000000000000000001",
+      "rank": 1,
+      "buy_usd": 1500,
+      "current_balance_ratio": 0,
+      "first_funder": "0xf000000000000000000000000000000000000100",
+      "wallet_age_days": 0,
+      "tx_count_before_entry": 1,
+      "first_buy_delay_seconds": 8
+    },
+    {
+      "wallet": "0x2000000000000000000000000000000000000002",
+      "rank": 2,
+      "buy_usd": 1300,
+      "current_balance_ratio": 0.02,
+      "first_funder": "0xf000000000000000000000000000000000000100",
+      "wallet_age_days": 0,
+      "tx_count_before_entry": 1,
+      "first_buy_delay_seconds": 11
+    },
+    {
+      "wallet": "0x2000000000000000000000000000000000000003",
+      "rank": 3,
+      "buy_usd": 1100,
+      "current_balance_ratio": 0,
+      "first_funder": "0xf000000000000000000000000000000000000100",
+      "wallet_age_days": 0,
+      "tx_count_before_entry": 2,
+      "first_buy_delay_seconds": 13
+    }
+  ]
+}

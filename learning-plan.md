@@ -5,26 +5,38 @@
 > 核心目标：**B — 产出可展示的个人项目，建立难以复制的个人品牌**
 > 核心竞争力：**A — Dune 链上数据能力**
 > 执行风格：**A — 每日明确任务清单，严格按计划执行**
-> 项目主线：**ChainMind — 能理解链上数据、生成可验证报告的 DeFi 研究 Agent**
+> 项目主线：**ChainMind — 链上行为风险过滤与可复制聪明钱研究系统**
 > 课程周期：**4 周（2026-05-18 → 2026-06-14）**
 
 ---
 
-## 🎯 项目定义：ChainMind — DeFi 智能研究助手
+## 🎯 项目定义：ChainMind — 链上行为风险过滤系统
 
 ### 一句话描述
-一个能查询链上数据、解读 DeFi 协议状态、生成可验证分析报告的 AI Agent。
+一个基于 Dune/API/Hermes/AI 的链上行为雷达：先过滤 meme token 的骗局、刷量、内盘和出货风险，再识别少数值得人工继续研究的可复制聪明钱信号。
 
 ### 为什么难以复制
-- **数据壁垒**：大多数学员不懂 Dune，不懂链上数据的"脆弱性"（滚回、滞后、粒度问题）
-- **领域壁垒**：懂 AI 的人不懂 DeFi 机制，懂 DeFi 的人不会搭 Agent 框架
-- **可验证壁垒**：大多数"DeFi Agent" 是聊天机器人，你的是"数据驱动 + 可追溯报告"
+- **数据壁垒**：大多数学员不懂 Dune，不懂链上数据的脆弱性（滞后、精度误差、路由污染、价格缺失）
+- **行为壁垒**：普通工具展示 token 表面数据，本项目分析早期买家、同 funder、刷量、出货和同实体分仓
+- **可复制壁垒**：不是只找赚钱钱包，而是识别普通用户仍有机会跟随的钱包行为
+- **复盘壁垒**：每次推送都记录 15m / 1h / 6h / 24h 表现，用结果反向校准评分
 
 ### 核心能力
-1. 自然语言查询链上数据（取代手写 SQL）
-2. 实时监控并解读 DeFi 异常事件
-3. 生成带数据来源引用的研究报告
-4. 支持多协议横向对比分析
+1. Token Risk Filter：过滤疑似刷量、内盘、早期出货、同实体分仓的 meme token
+2. Entity Detection Layer：用同 funder、时间指纹、新钱包比例、gas 来源和合约重叠识别地址集群
+3. Wallet Quality / Copyability Layer：区分高胜率钱包和可复制钱包
+4. AI Explanation Layer：基于结构化指标生成 A/B/C/D 分级、风险来源和后续观察条件
+5. Daily Review Loop：复盘推送后表现，持续校正规则
+
+### 第一阶段边界
+
+第一阶段不做自动交易、不做泛化行情看板、不追求 AI 直接预测涨跌。优先把项目做成一个可靠的风险过滤器：
+
+```text
+先排除坏机会
+再筛选可观察机会
+最后让 AI 解释为什么
+```
 
 ---
 
@@ -45,8 +57,12 @@ ai-web3-school-cohort-0/
 │   │   ├── uniswap_v3.py    # 协议特定分析器
 │   │   ├── aave_v3.py
 │   │   └── base.py            # 协议接口基类
+│   ├── scoring/
+│   │   ├── token_risk.py      # Token Risk Score
+│   │   ├── entity_cluster.py  # 同实体风险评分
+│   │   └── copyability.py     # 可复制性评分
 │   ├── reports/
-│   │   └── template.md        # 报告生成模板
+│   │   └── template.md        # 风险报告生成模板
 │   └── tests/
 │       └── test_core.py       # 测试
 ├── experiments/                 # 实验记录（每周一个子目录）
@@ -80,10 +96,11 @@ ai-web3-school-cohort-0/
 - 搭建最小 Agent 框架（能接收指令、调用工具、返回结果）
 - 交付：`chainmind/core/agent.py` 骨架
 
-**Day 3-4: Dune 数据接入**
+**Day 3-4: Dune 数据接入 + 风险指标模板**
 - 学习 Dune API（你已有基础，聚焦程序化调用）
-- 实现自然语言 → Dune Query → 数据 → 文本摘要
-- 交付：`chainmind/core/data_source.py` 能跑通的脚本
+- 实现固定 SQL 模板 → Dune Query → 风险指标摘要
+- 优先覆盖 BNB meme token 的早期买家、5 分钟买卖盘、同 funder、新钱包比例
+- 交付：`chainmind/core/data_source.py` + `experiments/week1-risk-filter/`
 
 **Day 5-6: Web3 基础接入**
 - 准备测试钱包，完成测试网交易
@@ -91,9 +108,9 @@ ai-web3-school-cohort-0/
 - 交付：测试网交易记录 + `experiments/week1-wallet/`
 
 **Day 7: 周复盘**
-- 整合 Week 1 代码，确保 Agent 能"查数据 + 说人话"
+- 整合 Week 1 代码，确保 Agent 能"查数据 + 输出风险摘要"
 - 产出 Week 1 学习总结
-- 交付：`experiments/week1-dune-agent/` 完整可运行
+- 交付：`experiments/week1-risk-filter/` 完整可运行
 
 ---
 
@@ -101,24 +118,23 @@ ai-web3-school-cohort-0/
 > 目标：多协议支持 + 明确黑客松方向。
 > 课程对应：AI × Web3 intersection areas
 
-**Day 8-9: Agent 数据解读**
-- 让 Agent 不仅仅"查到数据"，还能"解释数据意义"
-- 实现异常检测逻辑（TVL 骤降、交易量异常、清算风险）
-- 交付：`chainmind/core/analyzer.py` 基础版
+**Day 8-9: Token Risk Score**
+- 让 Agent 不仅仅"查到数据"，还能把数据转成风险判断
+- 实现早期买家清仓、trades/unique_traders、net_buy_usd、同 funder、新钱包比例等规则
+- 交付：`chainmind/scoring/token_risk.py` 基础版
 
-**Day 10-11: 多协议支持**
-- 实现 Uniswap V3 分析器（流动性、价格区间、手续费）
-- 实现 Aave V3 分析器（清算、借贷率、风险参数）
-- 交付：`chainmind/protocols/` 协议模块
+**Day 10-11: Entity Detection + Copyability**
+- 实现同实体风险评分：同 funder、时间集中、新钱包比例、gas 来源、合约交互重叠
+- 实现可复制性评分：同区块买入、开池后秒级买入、买入后 5-15 分钟是否仍有流动性
+- 交付：`chainmind/scoring/entity_cluster.py` + `chainmind/scoring/copyability.py`
 
 **Day 12-13: 方向锁定**
 - 结合课程 track（Agentic Commerce / Dev Tooling / AI Security / Governance）
-- 选定黑客松方向：**Dev Tooling — ChainMind 作为 DeFi 研究基础设施**
+- 选定黑客松方向：**Dev Tooling / AI Security — ChainMind 作为链上风险研究基础设施**
 - 产出项目提案文档
 - 交付：`submissions/hackathon-proposal.md`
 
-**Day 14: 周复盘**
-- 用 Agent 生成第一份 DeFi 协议速览报告
+- 用 Agent 生成第一份 BNB meme token 风险过滤报告
 - 整理 Week 2 笔记
 - 交付：`submissions/research/report-1.md`
 
@@ -131,11 +147,11 @@ ai-web3-school-cohort-0/
 **Day 15-16: 实时监控**
 - 添加定时任务 / 事件触发能力
 - 实现报告生成模板（Markdown 输出）
-- 交付：可定时运行的完整 Agent
+- 交付：可定时运行的风险扫描 Agent
 
 **Day 17-18: 报告引擎**
 - 实现带数据来源引用的报告生成
-- 支持多协议横向对比
+- 支持 A/B/C/D 分级、机会来源、风险来源、后续观察条件
 - 交付：`chainmind/reports/` 报告模块
 
 **Day 19-20: 工程化**
@@ -221,8 +237,8 @@ ai-web3-school-cohort-0/
 
 | 周次 | 里程碑 | 状态 | 备注 |
 |------|--------|------|------|
-| W1 | Dune 查询 Agent 原型 | ⬜ | 基础对齐 |
-| W2 | 多协议 + 方向锁定 | ⬜ | 交叉领域 |
+| W1 | BNB meme 风险过滤原型 | ⬜ | Dune + 固定指标模板 |
+| W2 | Token Risk + Entity + Copyability | ⬜ | 方向锁定 |
 | W3 | 报告引擎 + Web 界面 | ⬜ | 深化实践 |
 | W4 | 开源发布 + Demo | ⬜ | 黑客松冲刺 |
 

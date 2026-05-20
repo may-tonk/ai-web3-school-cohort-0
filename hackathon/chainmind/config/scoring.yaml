@@ -1,0 +1,21 @@
+version: "0.1.0"
+
+risk_levels:
+  low:
+    min: 0
+    max: 30
+  medium:
+    min: 30
+    max: 60
+  high:
+    min: 60
+    max: 80
+  extreme:
+    min: 80
+    max: 100
+
+grade_policy:
+  A: "High-priority manual review"
+  B: "Watchlist"
+  C: "Store only"
+  D: "Filter by default"
