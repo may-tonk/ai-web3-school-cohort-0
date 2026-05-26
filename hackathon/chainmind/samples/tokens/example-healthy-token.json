@@ -1,4 +1,10 @@
 {
+  "sample_meta": {
+    "sample_type": "synthetic",
+    "purpose": "engineering_test",
+    "is_real_onchain_data": false,
+    "notes": "Handwritten sample used to test a low-risk analysis path."
+  },
   "token": {
     "address": "0x0000000000000000000000000000000000000001",
     "symbol": "GOOD",
@@ -44,5 +50,16 @@
       "tx_count_before_entry": 24,
       "first_buy_delay_seconds": 510
     }
-  ]
+  ],
+  "funding": {
+    "shared_funders": [],
+    "new_wallet_ratio": 0,
+    "notes": "Early buyers have distinct funders and non-trivial wallet history."
+  },
+  "security": {
+    "source": "manual_sample",
+    "high_risk": false,
+    "warnings": []
+  },
+  "data_quality": {}
 }

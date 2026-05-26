@@ -39,6 +39,7 @@ ChainMind 暂不定位为 AI 自动投资机器人，也不做普通行情看板
 | `docs/data/05-dune-analysis-playbook.md` | Dune 手动分析模板、BNB token 分析步骤、核心 SQL 方向 |
 | `docs/operations/06-ai-hermes-reporting.md` | AI 报告模板、Hermes 推送节奏、分级提醒格式 |
 | `docs/roadmap/07-mvp-roadmap.md` | 阶段拆解、交付物、优先级和短期任务 |
+| `docs/roadmap/08-execution-plan.md` | 从建库到 Hermes、复盘学习的实际完成步骤 |
 | `docs/risks/08-risks-and-mitigations.md` | 可能遇到的困难、误判风险、对应解决方法 |
 | `docs/references/09-references.md` | 参考资料、API、论文和产品方法论链接 |
 | `docs/engineering/10-directory-guide.md` | 工程目录职责说明 |
@@ -51,4 +52,4 @@ ChainMind 暂不定位为 AI 自动投资机器人，也不做普通行情看板
 3. 开发评分系统时读 `docs/scoring/03-scoring-models.md`、`docs/scoring/04-judgement-framework.md` 和 `docs/data/04-wallet-entity-detection.md`。
 4. 写 Dune 查询时读 `docs/data/05-dune-analysis-playbook.md`。
 5. 接 Hermes 和 AI 报告时读 `docs/operations/06-ai-hermes-reporting.md`。
-6. 做计划和复盘时读 `docs/roadmap/07-mvp-roadmap.md`、`docs/risks/08-risks-and-mitigations.md` 与 `docs/learning/`。
+6. 做计划和复盘时读 `docs/roadmap/07-mvp-roadmap.md`、`docs/roadmap/08-execution-plan.md`、`docs/risks/08-risks-and-mitigations.md` 与 `docs/learning/`。

@@ -3,16 +3,21 @@
 from __future__ import annotations
 
 from chainmind.domain import AnalysisResult, TokenSnapshot
+from chainmind.scoring.data_quality import evaluate_data_quality
 from chainmind.scoring.opportunity import calculate_opportunity_score
 from chainmind.scoring.priority import grade_from_scores
 from chainmind.scoring.token_risk import calculate_token_risk
 
 
 def analyze_token(snapshot: TokenSnapshot) -> AnalysisResult:
+    data_quality = evaluate_data_quality(snapshot)
     risk = calculate_token_risk(snapshot)
     opportunity = calculate_opportunity_score(snapshot)
     grade, action = grade_from_scores(risk.score, opportunity.score)
-    reasons = _summary_reasons(snapshot, risk.score, opportunity.score)
+    reasons = _summary_reasons(
+        snapshot, risk.score, opportunity.score, data_quality.confidence
+    )
+    reasons.extend(data_quality.warnings)
     reasons.extend(risk.reasons)
     reasons.extend(opportunity.reasons)
 
@@ -24,16 +29,22 @@ def analyze_token(snapshot: TokenSnapshot) -> AnalysisResult:
         action=action,
         risk_score=risk.score,
         opportunity_score=opportunity.score,
+        data_quality=data_quality.to_mapping(),
+        risk_evidence=risk.evidence,
         reasons=reasons,
     )
 
 
 def _summary_reasons(
-    snapshot: TokenSnapshot, risk_score: int, opportunity_score: int
+    snapshot: TokenSnapshot,
+    risk_score: int,
+    opportunity_score: int,
+    data_confidence: str,
 ) -> list[str]:
     reasons = [
         f"Placeholder risk score is {risk_score}; detailed token risk rules are next.",
         f"Placeholder opportunity score is {opportunity_score}; wallet alpha is not implemented yet.",
+        f"Data confidence is {data_confidence}.",
     ]
 
     if snapshot.flow_5m:

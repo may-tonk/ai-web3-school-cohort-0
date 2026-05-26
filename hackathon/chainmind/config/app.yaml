@@ -6,7 +6,26 @@ paths:
   runtime_dir: runtime
   report_dir: runtime/reports
   sample_token_dir: samples/tokens
+  real_snapshot_dir: experiments/week2-token-risk-score/real-token-snapshots
 
 analysis:
   default_chain: bnb
   default_report_format: markdown
+
+integrations:
+  dune:
+    enabled: false
+    api_key_env: DUNE_API_KEY
+    base_url: https://api.dune.com/api/v1
+    default_chain: bnb
+    query_parameter:
+      token_address: token_address
+    query_ids:
+      token_trading_activity_env: DUNE_QUERY_TOKEN_TRADING_ACTIVITY
+      five_minute_flow_env: DUNE_QUERY_FIVE_MINUTE_FLOW
+      early_buyers_env: DUNE_QUERY_EARLY_BUYERS
+      early_buyer_funding_env: DUNE_QUERY_EARLY_BUYER_FUNDING
+    execution:
+      poll_interval_seconds: 5
+      timeout_seconds: 180
+      max_result_rows: 5000

@@ -1,4 +1,10 @@
 {
+  "sample_meta": {
+    "sample_type": "synthetic",
+    "purpose": "engineering_test",
+    "is_real_onchain_data": false,
+    "notes": "Handwritten sample used to test a multi-risk analysis path."
+  },
   "token": {
     "address": "0x0000000000000000000000000000000000000002",
     "symbol": "RISK",
@@ -54,5 +60,22 @@
       "tx_count_before_entry": 2,
       "first_buy_delay_seconds": 13
     }
-  ]
+  ],
+  "funding": {
+    "shared_funders": [
+      {
+        "funder": "0xf000000000000000000000000000000000000100",
+        "funded_early_buyers": 3,
+        "is_infrastructure": false
+      }
+    ],
+    "new_wallet_ratio": 1,
+    "notes": "All sampled early buyers are new wallets funded by the same non-infrastructure address."
+  },
+  "security": {
+    "source": "manual_sample",
+    "high_risk": false,
+    "warnings": []
+  },
+  "data_quality": {}
 }

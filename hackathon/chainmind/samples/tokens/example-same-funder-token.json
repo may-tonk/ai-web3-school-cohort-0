@@ -1,0 +1,55 @@
+{
+  "sample_meta": {
+    "sample_type": "synthetic",
+    "purpose": "engineering_test",
+    "is_real_onchain_data": false,
+    "expected_primary_rules": ["shared_funder_cluster", "new_wallet_ratio_high"]
+  },
+  "token": {
+    "address": "0x0000000000000000000000000000000000000104",
+    "symbol": "FUNDER",
+    "chain": "bnb",
+    "created_at": "2026-05-20T10:00:00Z"
+  },
+  "market": {
+    "liquidity_usd": 65000,
+    "volume_5m_usd": 15000,
+    "volume_1h_usd": 110000,
+    "holder_count": 360
+  },
+  "flow_5m": [
+    {
+      "bucket": "2026-05-20T10:05:00Z",
+      "trades": 65,
+      "unique_traders": 42,
+      "buyers": 28,
+      "sellers": 12,
+      "buy_volume_usd": 9800,
+      "sell_volume_usd": 3600,
+      "net_buy_usd": 6200
+    }
+  ],
+  "early_buyers": [
+    {"wallet": "0x1040000000000000000000000000000000000001", "rank": 1, "current_balance_ratio": 0.8, "wallet_age_days": 0, "tx_count_before_entry": 1},
+    {"wallet": "0x1040000000000000000000000000000000000002", "rank": 2, "current_balance_ratio": 0.7, "wallet_age_days": 0, "tx_count_before_entry": 1},
+    {"wallet": "0x1040000000000000000000000000000000000003", "rank": 3, "current_balance_ratio": 0.75, "wallet_age_days": 0, "tx_count_before_entry": 2},
+    {"wallet": "0x1040000000000000000000000000000000000004", "rank": 4, "current_balance_ratio": 0.65, "wallet_age_days": 1, "tx_count_before_entry": 2},
+    {"wallet": "0x1040000000000000000000000000000000000005", "rank": 5, "current_balance_ratio": 0.9, "wallet_age_days": 14, "tx_count_before_entry": 21}
+  ],
+  "funding": {
+    "shared_funders": [
+      {
+        "funder": "0xf104000000000000000000000000000000000001",
+        "funded_early_buyers": 4,
+        "is_infrastructure": false
+      }
+    ],
+    "new_wallet_ratio": 0.8
+  },
+  "security": {
+    "source": "manual_sample",
+    "high_risk": false,
+    "warnings": []
+  },
+  "data_quality": {}
+}

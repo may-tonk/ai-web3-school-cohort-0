@@ -29,8 +29,20 @@ def test_analyze_token_returns_minimal_result():
                     "current_balance_ratio": 0.8,
                 }
             ],
+            "funding": {
+                "shared_funders": [],
+                "new_wallet_ratio": 0,
+            },
+            "security": {
+                "high_risk": False,
+            },
+            "data_quality": {},
         }
     )
+
+    assert snapshot.funding["shared_funders"] == []
+    assert snapshot.security["high_risk"] is False
+    assert snapshot.data_quality == {}
 
     result = analyze_token(snapshot)
 
@@ -39,3 +51,4 @@ def test_analyze_token_returns_minimal_result():
     assert result.grade in {"A", "B", "C", "D"}
     assert result.risk_score >= 0
     assert result.opportunity_score >= 0
+    assert result.data_quality["level"] in {"good", "partial", "poor"}

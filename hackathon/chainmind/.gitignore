@@ -1,6 +1,10 @@
 .venv/
 .idea/
 
+.env
+.env.local
+.env.*.local
+
 __pycache__/
 *.py[cod]
 *$py.class
@@ -14,6 +18,8 @@ runtime/exports/
 runtime/learning/
 runtime/logs/
 runtime/reports/
+
+experiments/week2-token-risk-score/dune-query-cache/
 
 *.egg-info/
 build/

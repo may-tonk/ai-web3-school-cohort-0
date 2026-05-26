@@ -14,6 +14,9 @@ class TokenSnapshot:
     market: dict[str, Any] = field(default_factory=dict)
     flow_5m: list[dict[str, Any]] = field(default_factory=list)
     early_buyers: list[dict[str, Any]] = field(default_factory=list)
+    funding: dict[str, Any] = field(default_factory=dict)
+    security: dict[str, Any] = field(default_factory=dict)
+    data_quality: dict[str, Any] = field(default_factory=dict)
 
     @classmethod
     def from_mapping(cls, payload: dict[str, Any]) -> "TokenSnapshot":
@@ -22,6 +25,9 @@ class TokenSnapshot:
             market=dict(payload.get("market", {})),
             flow_5m=list(payload.get("flow_5m", [])),
             early_buyers=list(payload.get("early_buyers", [])),
+            funding=dict(payload.get("funding", {})),
+            security=dict(payload.get("security", {})),
+            data_quality=dict(payload.get("data_quality", {})),
         )
 
     @property
@@ -48,6 +54,8 @@ class AnalysisResult:
     action: str
     risk_score: int
     opportunity_score: int
+    data_quality: dict[str, Any]
+    risk_evidence: list[dict[str, Any]]
     reasons: list[str]
 
     def to_mapping(self) -> dict[str, Any]:
@@ -59,5 +67,7 @@ class AnalysisResult:
             "action": self.action,
             "risk_score": self.risk_score,
             "opportunity_score": self.opportunity_score,
+            "data_quality": dict(self.data_quality),
+            "risk_evidence": list(self.risk_evidence),
             "reasons": list(self.reasons),
         }

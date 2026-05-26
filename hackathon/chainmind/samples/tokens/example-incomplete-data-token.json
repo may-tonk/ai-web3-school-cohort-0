@@ -1,0 +1,25 @@
+{
+  "sample_meta": {
+    "sample_type": "synthetic",
+    "purpose": "engineering_test",
+    "is_real_onchain_data": false,
+    "expected_data_quality": "poor"
+  },
+  "token": {
+    "address": "0x0000000000000000000000000000000000000105",
+    "symbol": "NODATA",
+    "chain": "bnb",
+    "created_at": "2026-05-20T10:00:00Z"
+  },
+  "market": {
+    "liquidity_usd": 50000,
+    "volume_5m_usd": 0,
+    "holder_count": 90
+  },
+  "security": {
+    "source": "manual_sample",
+    "high_risk": false,
+    "warnings": []
+  },
+  "data_quality": {}
+}

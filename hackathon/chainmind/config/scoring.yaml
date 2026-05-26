@@ -1,5 +1,9 @@
 version: "0.1.0"
 
+risk_score:
+  min: 0
+  max: 100
+
 risk_levels:
   low:
     min: 0
@@ -19,3 +23,90 @@ grade_policy:
   B: "Watchlist"
   C: "Store only"
   D: "Filter by default"
+
+token_risk:
+  description: "Token Risk Score v0.1 rule settings. Current Python rules mirror these values; a config loader will be added later."
+  base_score: 20
+  max_score: 100
+
+  liquidity:
+    low_liquidity:
+      rule_id: "low_liquidity"
+      metric: "liquidity_usd"
+      threshold_usd: 20000
+      comparison: "<"
+      score_delta: 20
+      severity: "medium"
+
+  flow:
+    high_trade_density:
+      rule_id: "high_trade_density"
+      metric: "trades_per_unique_trader"
+      threshold: 5
+      comparison: ">"
+      score_delta: 20
+      severity: "medium"
+
+    negative_latest_net_buy:
+      rule_id: "negative_latest_net_buy"
+      metric: "net_buy_usd"
+      threshold: 0
+      comparison: "<"
+      score_delta: 15
+      severity: "medium"
+
+    sell_pressure_dominates:
+      rule_id: "sell_pressure_dominates"
+      metrics:
+        - "sellers"
+        - "buyers"
+        - "sell_volume_usd"
+        - "buy_volume_usd"
+      trigger: "sellers > buyers and sell_volume_usd > buy_volume_usd"
+      score_delta: 15
+      severity: "medium"
+
+    repeated_negative_net_buy:
+      rule_id: "repeated_negative_net_buy"
+      metric: "negative_net_buy_buckets_last_3"
+      lookback_buckets: 3
+      threshold: 2
+      comparison: ">="
+      score_delta: 20
+      severity: "high"
+
+  early_buyers:
+    high_exit_ratio:
+      rule_id: "early_buyer_exit_ratio_high"
+      metric: "early_buyer_exit_ratio"
+      exited_balance_ratio_threshold: 0.05
+      threshold: 0.6
+      comparison: ">"
+      score_delta: 25
+      severity: "high"
+
+  funding:
+    shared_funder_cluster:
+      rule_id: "shared_funder_cluster"
+      metric: "funded_early_buyers"
+      threshold: 2
+      comparison: ">="
+      ignore_infrastructure_funders: true
+      score_delta: 20
+      severity: "high"
+
+    new_wallet_ratio_high:
+      rule_id: "new_wallet_ratio_high"
+      metric: "new_wallet_ratio"
+      threshold: 0.6
+      comparison: ">"
+      score_delta: 15
+      severity: "medium"
+
+  security:
+    high_risk:
+      rule_id: "security_high_risk"
+      metric: "security.high_risk"
+      trigger_value: true
+      score_delta: 50
+      severity: "critical"
