@@ -4,10 +4,9 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import sys
 from pathlib import Path
-from typing import Sequence
+from typing import Any, Sequence
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -15,19 +14,18 @@ SRC_ROOT = PROJECT_ROOT / "src"
 if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
-from chainmind.data.dune_client import DuneClient, DuneConfig
-from chainmind.data.dune_mappers import build_snapshot_from_dune_results
 from chainmind.data.env import load_dotenv
-from chainmind.domain import TokenSnapshot
-from chainmind.orchestration import analyze_token
-
-
-QUERY_ENV_KEYS = {
-    "trading_activity": "DUNE_QUERY_TOKEN_TRADING_ACTIVITY",
-    "five_minute_flow": "DUNE_QUERY_FIVE_MINUTE_FLOW",
-    "early_buyers": "DUNE_QUERY_EARLY_BUYERS",
-    "early_buyer_funding": "DUNE_QUERY_EARLY_BUYER_FUNDING",
-}
+from chainmind.orchestration.analyze_dune_token import (
+    DuneTokenAnalysisConfig,
+    analyze_dune_token,
+    build_client_from_env,
+    build_honeypot_client_from_env,
+    build_intelligence_client_from_env,
+    build_market_client_from_env,
+    build_rpc_client_from_env,
+    build_security_client_from_env,
+    load_query_set_from_env,
+)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -60,166 +58,172 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     load_dotenv(PROJECT_ROOT / ".env")
 
-    client = _build_client()
-    query_ids = _load_query_ids()
-
-    trading_rows = _load_or_run_query(
-        client,
-        query_ids["trading_activity"],
-        args.token_address,
-        "trading_activity",
-        args.cache_dir,
-        args.refresh_cache,
-    )
-    flow_rows = _load_or_run_query(
-        client,
-        query_ids["five_minute_flow"],
-        args.token_address,
-        "five_minute_flow",
-        args.cache_dir,
-        args.refresh_cache,
-    )
-    early_buyer_rows = _load_or_run_query(
-        client,
-        query_ids["early_buyers"],
-        args.token_address,
-        "early_buyers",
-        args.cache_dir,
-        args.refresh_cache,
-    )
-    funding_rows = _load_or_run_query(
-        client,
-        query_ids["early_buyer_funding"],
-        args.token_address,
-        "early_buyer_funding",
-        args.cache_dir,
-        args.refresh_cache,
-    )
-
-    snapshot_payload = build_snapshot_from_dune_results(
+    result = analyze_dune_token(
         token_address=args.token_address,
-        chain="bnb",
-        trading_activity_rows=trading_rows,
-        flow_5m_rows=flow_rows,
-        early_buyer_rows=early_buyer_rows,
-        funding_rows=funding_rows,
+        client=build_client_from_env(),
+        query_ids=load_query_set_from_env(),
+        config=DuneTokenAnalysisConfig(
+            chain="bnb",
+            cache_dir=args.cache_dir,
+            refresh_cache=args.refresh_cache,
+        ),
+        market_client=build_market_client_from_env(),
+        security_client=build_security_client_from_env(),
+        honeypot_client=build_honeypot_client_from_env(),
+        intelligence_client=build_intelligence_client_from_env(),
+        rpc_client=build_rpc_client_from_env(),
+        log=print,
     )
 
     if args.save_snapshot:
         args.save_snapshot.parent.mkdir(parents=True, exist_ok=True)
         args.save_snapshot.write_text(
-            json.dumps(snapshot_payload, ensure_ascii=False, indent=2),
+            json.dumps(result.snapshot, ensure_ascii=False, indent=2),
             encoding="utf-8",
         )
 
-    result = analyze_token(TokenSnapshot.from_mapping(snapshot_payload))
-    output = {
-        "snapshot": snapshot_payload,
-        "analysis": result.to_mapping(),
-    }
+    output = result.to_mapping()
 
     if args.json:
         print(json.dumps(output, ensure_ascii=False, indent=2))
     else:
-        analysis = result.to_mapping()
-        print(f"Token: {analysis['token_address']} / BNB")
-        print(f"Grade: {analysis['grade']}")
-        print(f"Action: {analysis['action']}")
-        print(f"Risk Score: {analysis['risk_score']}")
-        print(f"Data Quality: {analysis['data_quality']['level']}")
-        print("Risk Evidence:")
-        for item in analysis["risk_evidence"]:
-            print(f"- {item['rule_id']}: {item['metric']}={item['value']}")
+        print_human_output(output)
     return 0
 
 
-def _build_client() -> DuneClient:
-    api_key = os.environ.get("DUNE_API_KEY")
-    if not api_key:
-        raise RuntimeError("DUNE_API_KEY is not set.")
-    return DuneClient(DuneConfig(api_key=api_key))
+def print_human_output(output: dict[str, Any]) -> None:
+    snapshot = dict(output["snapshot"])
+    analysis = dict(output["analysis"])
+    market = dict(snapshot.get("market") or {})
+    security = dict(snapshot.get("security") or {})
+    contract = dict(snapshot.get("contract") or {})
+    holders = dict(snapshot.get("holders") or {})
+    nansen = dict(dict(snapshot.get("intelligence") or {}).get("nansen") or {})
+
+    symbol = market.get("base_token_symbol") or analysis.get("symbol") or "UNKNOWN"
+
+    print("")
+    print("Summary")
+    print(f"Token: {analysis['token_address']} / BNB")
+    print(f"Symbol: {symbol}")
+    print(f"Grade: {analysis['grade']}")
+    print(f"Action: {analysis['action']}")
+    print(f"Risk Score: {analysis['risk_score']}")
+    print(f"Security Score: {analysis['security_score']}")
+    print(f"Entity Cluster Score: {analysis['entity_cluster_score']}")
+    print(f"Data Quality: {analysis['data_quality']['level']} ({analysis['data_quality']['confidence']})")
+
+    print("")
+    print("Market")
+    print(f"Pair: {_value(market.get('pair_address'))}")
+    print(f"DEX: {_value(market.get('dex_id'))}")
+    print(f"Price USD: {_money(market.get('price_usd'))}")
+    print(f"Liquidity USD: {_money(market.get('liquidity_usd'))}")
+    print(f"FDV USD: {_money(market.get('fdv_usd'))}")
+    print(f"24h Volume USD: {_money(market.get('volume_24h_usd'))}")
+    print(f"24h Txns: {_txns(market.get('txns_24h'))}")
+    print(f"24h Price Change: {_percent(market.get('price_change_24h_pct'), already_percent=True)}")
+
+    print("")
+    print("Security")
+    print(f"Honeypot: {_value(security.get('is_honeypot'))}")
+    print(f"Buy Tax: {_percent(security.get('buy_tax'))}")
+    print(f"Sell Tax: {_percent(security.get('sell_tax'))}")
+    print(f"Cannot Sell All: {_value(security.get('cannot_sell_all'))}")
+    print(f"Owner Renounced: {_value(contract.get('owner_renounced'))}")
+    print(f"Mintable: {_value(contract.get('is_mintable'))}")
+    print(f"Hidden Owner: {_value(contract.get('hidden_owner'))}")
+    print(f"Holder Count: {_integer(holders.get('holder_count'))}")
+    print(f"Security Sources: {_sources(security)}")
+
+    print("")
+    print("Nansen")
+    print(f"Smart Money Signal: {_value(nansen.get('has_smart_money_signal'))}")
+    print(f"Smart Money Holdings: {_integer(nansen.get('smart_money_holdings_count'))}")
+    print(f"TGM Smart Money Holders: {_integer(nansen.get('tgm_smart_money_holder_count'))}")
+
+    api_warnings = list(dict(snapshot.get("data_quality") or {}).get("api_warnings") or [])
+    if api_warnings:
+        print("")
+        print("API Warnings")
+        for warning in api_warnings:
+            print(f"- {warning}")
+
+    _print_evidence("Risk Evidence", analysis.get("risk_evidence") or [])
+    _print_evidence("Security Evidence", analysis.get("security_evidence") or [])
+    _print_evidence("Entity Evidence", analysis.get("entity_cluster_evidence") or [])
 
 
-def _load_query_ids() -> dict[str, str]:
-    query_ids = {}
-    missing = []
-    for name, env_key in QUERY_ENV_KEYS.items():
-        value = os.environ.get(env_key)
-        if not value:
-            missing.append(env_key)
-        else:
-            query_ids[name] = value
-    if missing:
-        raise RuntimeError(f"Missing Dune query id environment variables: {missing}")
-    return query_ids
-
-
-def _load_or_run_query(
-    client: DuneClient,
-    query_id: str,
-    token_address: str,
-    query_name: str,
-    cache_dir: Path,
-    refresh_cache: bool,
-) -> list[dict[str, object]]:
-    cache_path = _cache_path(cache_dir, token_address, query_name)
-    execution_path = _execution_path(cache_dir, token_address, query_name)
-    if cache_path.exists() and not refresh_cache:
-        payload = json.loads(cache_path.read_text(encoding="utf-8"))
-        rows = payload.get("rows", [])
-        if not isinstance(rows, list):
-            raise RuntimeError(f"Invalid Dune cache rows: {cache_path}")
-        print(f"Using cached Dune rows: {query_name} ({len(rows)} rows)")
-        return [dict(row) for row in rows]
-
-    if execution_path.exists() and not refresh_cache:
-        execution_payload = json.loads(execution_path.read_text(encoding="utf-8"))
-        execution_id = str(execution_payload["execution_id"])
-        print(f"Resuming Dune execution: {query_name} ({execution_id})")
-    else:
-        print(f"Running Dune query: {query_name}")
-        execution_id = client.execute_query(query_id, token_address)
-        execution_path.parent.mkdir(parents=True, exist_ok=True)
-        execution_path.write_text(
-            json.dumps(
-                {
-                    "token_address": token_address,
-                    "query_name": query_name,
-                    "query_id": query_id,
-                    "execution_id": execution_id,
-                },
-                ensure_ascii=False,
-                indent=2,
-            ),
-            encoding="utf-8",
+def _print_evidence(title: str, evidence: list[dict[str, Any]]) -> None:
+    print("")
+    print(title)
+    if not evidence:
+        print("- None")
+        return
+    for item in evidence:
+        print(
+            f"- {item.get('rule_id')}: "
+            f"{item.get('metric')}={_value(item.get('value'))} "
+            f"(severity={item.get('severity')}, score_delta={item.get('score_delta')})"
         )
 
-    client.wait_for_execution(execution_id)
-    rows = client.get_execution_results(execution_id)
-    cache_path.parent.mkdir(parents=True, exist_ok=True)
-    cache_payload = {
-        "token_address": token_address,
-        "query_name": query_name,
-        "query_id": query_id,
-        "execution_id": execution_id,
-        "rows": rows,
-    }
-    cache_path.write_text(
-        json.dumps(cache_payload, ensure_ascii=False, indent=2),
-        encoding="utf-8",
-    )
-    print(f"Cached Dune rows: {query_name} ({len(rows)} rows)")
-    return rows
+
+def _sources(security: dict[str, Any]) -> str:
+    sources = [
+        security.get("source"),
+        security.get("honeypot_source"),
+        security.get("simulation_source"),
+        security.get("rpc_source"),
+    ]
+    unique_sources = []
+    for source in sources:
+        if source and source not in unique_sources:
+            unique_sources.append(str(source))
+    return ", ".join(unique_sources) if unique_sources else "N/A"
 
 
-def _cache_path(cache_dir: Path, token_address: str, query_name: str) -> Path:
-    token = token_address.lower().replace("0x", "")
-    return cache_dir / token / f"{query_name}.json"
+def _txns(value: Any) -> str:
+    if not isinstance(value, dict):
+        return "N/A"
+    return f"buys={_integer(value.get('buys'))}, sells={_integer(value.get('sells'))}"
 
 
-def _execution_path(cache_dir: Path, token_address: str, query_name: str) -> Path:
-    token = token_address.lower().replace("0x", "")
-    return cache_dir / token / f"{query_name}.execution.json"
+def _money(value: Any) -> str:
+    number = _float(value)
+    if number is None:
+        return "N/A"
+    return f"{number:,.6f}" if abs(number) < 1 else f"{number:,.2f}"
+
+
+def _percent(value: Any, *, already_percent: bool = False) -> str:
+    number = _float(value)
+    if number is None:
+        return "N/A"
+    if not already_percent:
+        number *= 100
+    return f"{number:.2f}%"
+
+
+def _integer(value: Any) -> str:
+    number = _float(value)
+    if number is None:
+        return "N/A"
+    return f"{int(number):,}"
+
+
+def _float(value: Any) -> float | None:
+    if value is None:
+        return None
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _value(value: Any) -> str:
+    if value is None or value == "":
+        return "N/A"
+    return str(value)
 
 
 if __name__ == "__main__":

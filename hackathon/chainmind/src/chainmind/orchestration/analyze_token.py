@@ -4,14 +4,18 @@ from __future__ import annotations
 
 from chainmind.domain import AnalysisResult, TokenSnapshot
 from chainmind.scoring.data_quality import evaluate_data_quality
+from chainmind.scoring.entity_cluster import calculate_entity_cluster_score
 from chainmind.scoring.opportunity import calculate_opportunity_score
 from chainmind.scoring.priority import grade_from_scores
+from chainmind.scoring.security import calculate_security_score
 from chainmind.scoring.token_risk import calculate_token_risk
 
 
 def analyze_token(snapshot: TokenSnapshot) -> AnalysisResult:
     data_quality = evaluate_data_quality(snapshot)
     risk = calculate_token_risk(snapshot)
+    security = calculate_security_score(snapshot)
+    entity_cluster = calculate_entity_cluster_score(snapshot)
     opportunity = calculate_opportunity_score(snapshot)
     grade, action = grade_from_scores(risk.score, opportunity.score)
     reasons = _summary_reasons(
@@ -19,6 +23,8 @@ def analyze_token(snapshot: TokenSnapshot) -> AnalysisResult:
     )
     reasons.extend(data_quality.warnings)
     reasons.extend(risk.reasons)
+    reasons.extend(security.reasons)
+    reasons.extend(entity_cluster.reasons)
     reasons.extend(opportunity.reasons)
 
     return AnalysisResult(
@@ -31,6 +37,10 @@ def analyze_token(snapshot: TokenSnapshot) -> AnalysisResult:
         opportunity_score=opportunity.score,
         data_quality=data_quality.to_mapping(),
         risk_evidence=risk.evidence,
+        security_score=security.score,
+        security_evidence=security.evidence,
+        entity_cluster_score=entity_cluster.score,
+        entity_cluster_evidence=entity_cluster.evidence,
         reasons=reasons,
     )
 

@@ -52,3 +52,70 @@ def test_build_snapshot_from_dune_results_maps_core_fields():
     assert snapshot["flow_5m"][0]["net_buy_usd"] == 500.0
     assert snapshot["early_buyers"][0]["first_funder"] == "0xfunder"
     assert snapshot["funding"]["shared_funders"][0]["funded_early_buyers"] == 2
+
+
+def test_build_snapshot_from_dune_results_handles_dirty_numeric_rows():
+    snapshot = build_snapshot_from_dune_results(
+        token_address="0xabc",
+        chain="bnb",
+        trading_activity_rows=[
+            {
+                "project": "broken",
+                "volume_usd": "nan",
+                "trades": "bad",
+                "unique_traders": "",
+            },
+            {
+                "project": "pancakeswap",
+                "volume_usd": "2500",
+                "trades": "10",
+                "unique_traders": "8",
+            },
+        ],
+        flow_5m_rows=[
+            {
+                "bucket_5m": " 2026-05-26 00:05:00 ",
+                "trades": "bad",
+                "net_buy_usd": "inf",
+            }
+        ],
+        early_buyer_rows=[
+            {
+                "buyer": " 0xBuyer ",
+                "remaining_ratio": "nan",
+            }
+        ],
+        funding_rows=[
+            {
+                "buyer": " 0xbuyer ",
+                "funder": "",
+            }
+        ],
+    )
+
+    assert snapshot["market"]["project"] == "pancakeswap"
+    assert snapshot["market"]["volume_source_dune_usd"] == 2500.0
+    assert snapshot["flow_5m"][0]["trades"] is None
+    assert snapshot["flow_5m"][0]["net_buy_usd"] is None
+    assert snapshot["early_buyers"][0]["wallet"] == "0xbuyer"
+    assert snapshot["early_buyers"][0]["remaining_ratio"] is None
+
+
+def test_build_snapshot_from_dune_results_clamps_negative_remaining_ratio():
+    snapshot = build_snapshot_from_dune_results(
+        token_address="0xabc",
+        chain="bnb",
+        trading_activity_rows=[],
+        flow_5m_rows=[],
+        early_buyer_rows=[
+            {
+                "buyer": "0xBuyer",
+                "current_balance": "-5",
+                "remaining_ratio": "-0.2",
+            }
+        ],
+        funding_rows=[],
+    )
+
+    assert snapshot["early_buyers"][0]["current_balance"] == -5.0
+    assert snapshot["early_buyers"][0]["remaining_ratio"] == 0

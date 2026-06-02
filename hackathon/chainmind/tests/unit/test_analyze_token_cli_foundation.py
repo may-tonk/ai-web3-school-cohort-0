@@ -36,12 +36,20 @@ def test_analyze_token_returns_minimal_result():
             "security": {
                 "high_risk": False,
             },
+            "holders": {
+                "holder_count": 100,
+            },
+            "contract": {
+                "owner": "0x0000000000000000000000000000000000000000",
+            },
             "data_quality": {},
         }
     )
 
     assert snapshot.funding["shared_funders"] == []
     assert snapshot.security["high_risk"] is False
+    assert snapshot.holders["holder_count"] == 100
+    assert snapshot.contract["owner"] == "0x0000000000000000000000000000000000000000"
     assert snapshot.data_quality == {}
 
     result = analyze_token(snapshot)

@@ -16,6 +16,9 @@ class TokenSnapshot:
     early_buyers: list[dict[str, Any]] = field(default_factory=list)
     funding: dict[str, Any] = field(default_factory=dict)
     security: dict[str, Any] = field(default_factory=dict)
+    holders: dict[str, Any] = field(default_factory=dict)
+    contract: dict[str, Any] = field(default_factory=dict)
+    intelligence: dict[str, Any] = field(default_factory=dict)
     data_quality: dict[str, Any] = field(default_factory=dict)
 
     @classmethod
@@ -27,6 +30,9 @@ class TokenSnapshot:
             early_buyers=list(payload.get("early_buyers", [])),
             funding=dict(payload.get("funding", {})),
             security=dict(payload.get("security", {})),
+            holders=dict(payload.get("holders", {})),
+            contract=dict(payload.get("contract", {})),
+            intelligence=dict(payload.get("intelligence", {})),
             data_quality=dict(payload.get("data_quality", {})),
         )
 
@@ -57,6 +63,10 @@ class AnalysisResult:
     data_quality: dict[str, Any]
     risk_evidence: list[dict[str, Any]]
     reasons: list[str]
+    security_score: int = 0
+    security_evidence: list[dict[str, Any]] = field(default_factory=list)
+    entity_cluster_score: int = 0
+    entity_cluster_evidence: list[dict[str, Any]] = field(default_factory=list)
 
     def to_mapping(self) -> dict[str, Any]:
         return {
@@ -67,7 +77,11 @@ class AnalysisResult:
             "action": self.action,
             "risk_score": self.risk_score,
             "opportunity_score": self.opportunity_score,
+            "security_score": self.security_score,
+            "entity_cluster_score": self.entity_cluster_score,
             "data_quality": dict(self.data_quality),
             "risk_evidence": list(self.risk_evidence),
+            "security_evidence": list(self.security_evidence),
+            "entity_cluster_evidence": list(self.entity_cluster_evidence),
             "reasons": list(self.reasons),
         }
