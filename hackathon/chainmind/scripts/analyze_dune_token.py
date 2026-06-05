@@ -111,6 +111,9 @@ def print_human_output(output: dict[str, Any]) -> None:
     print(f"Risk Score: {analysis['risk_score']}")
     print(f"Security Score: {analysis['security_score']}")
     print(f"Entity Cluster Score: {analysis['entity_cluster_score']}")
+    print(f"Opportunity Score: {analysis['opportunity_score']}")
+    print(f"Copyability Score: {analysis['copyability_score']}")
+    print(f"Priority Score: {analysis['priority_score']}")
     print(f"Data Quality: {analysis['data_quality']['level']} ({analysis['data_quality']['confidence']})")
 
     print("")
@@ -152,6 +155,8 @@ def print_human_output(output: dict[str, Any]) -> None:
     _print_evidence("Risk Evidence", analysis.get("risk_evidence") or [])
     _print_evidence("Security Evidence", analysis.get("security_evidence") or [])
     _print_evidence("Entity Evidence", analysis.get("entity_cluster_evidence") or [])
+    _print_evidence("Copyability Evidence", analysis.get("copyability_evidence") or [])
+    _print_evidence("Priority Evidence", analysis.get("priority_evidence") or [])
 
 
 def _print_evidence(title: str, evidence: list[dict[str, Any]]) -> None:

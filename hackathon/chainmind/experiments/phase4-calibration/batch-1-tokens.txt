@@ -1,0 +1,11 @@
+# Phase 4A.1 calibration batch 1
+# Scope: cached BNB meme-token samples only.
+# Mainstream / stablecoin controls are deferred to batch 2 to avoid mixing
+# cached regression with fresh Dune query behavior.
+
+0xf500d904b07ac6214be407b69fe817a82eac7777
+0x90166915b98d24d284c56de3b9f4ed59338f7777
+0x3d96b30ba2c08724b70efff1ad16d005db1c7777
+0x90507254e9c594e728172b9d217f4ab1a2ee7777
+0xff6b0006d17af50a0c0082ca1beb03af3f284444
+0x9ec5d5082895b8bf56523e02a831aa0dc8737777

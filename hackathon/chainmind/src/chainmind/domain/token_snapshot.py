@@ -67,6 +67,10 @@ class AnalysisResult:
     security_evidence: list[dict[str, Any]] = field(default_factory=list)
     entity_cluster_score: int = 0
     entity_cluster_evidence: list[dict[str, Any]] = field(default_factory=list)
+    copyability_score: int = 0
+    copyability_evidence: list[dict[str, Any]] = field(default_factory=list)
+    priority_score: int = 0
+    priority_evidence: list[dict[str, Any]] = field(default_factory=list)
 
     def to_mapping(self) -> dict[str, Any]:
         return {
@@ -79,9 +83,13 @@ class AnalysisResult:
             "opportunity_score": self.opportunity_score,
             "security_score": self.security_score,
             "entity_cluster_score": self.entity_cluster_score,
+            "copyability_score": self.copyability_score,
+            "priority_score": self.priority_score,
             "data_quality": dict(self.data_quality),
             "risk_evidence": list(self.risk_evidence),
             "security_evidence": list(self.security_evidence),
             "entity_cluster_evidence": list(self.entity_cluster_evidence),
+            "copyability_evidence": list(self.copyability_evidence),
+            "priority_evidence": list(self.priority_evidence),
             "reasons": list(self.reasons),
         }

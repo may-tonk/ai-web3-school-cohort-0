@@ -39,6 +39,9 @@ TABLE_COLUMNS = [
     "risk",
     "security",
     "entity",
+    "opportunity",
+    "copyability",
+    "priority",
     "data_quality",
     "liquidity_usd",
     "volume_24h_usd",
@@ -52,6 +55,7 @@ TABLE_COLUMNS = [
     "risk_rules",
     "security_rules",
     "entity_rules",
+    "copyability_rules",
     "error",
 ]
 
@@ -175,6 +179,9 @@ def summarize_analysis(output: dict[str, Any]) -> dict[str, Any]:
         "risk": analysis.get("risk_score"),
         "security": analysis.get("security_score"),
         "entity": analysis.get("entity_cluster_score"),
+        "opportunity": analysis.get("opportunity_score"),
+        "copyability": analysis.get("copyability_score"),
+        "priority": analysis.get("priority_score"),
         "data_quality": _data_quality_label(analysis.get("data_quality")),
         "liquidity_usd": _round(market.get("liquidity_usd"), 2),
         "volume_24h_usd": _round(market.get("volume_24h_usd"), 2),
@@ -188,6 +195,7 @@ def summarize_analysis(output: dict[str, Any]) -> dict[str, Any]:
         "risk_rules": _rule_ids(analysis.get("risk_evidence")),
         "security_rules": _rule_ids(analysis.get("security_evidence")),
         "entity_rules": _rule_ids(analysis.get("entity_cluster_evidence")),
+        "copyability_rules": _rule_ids(analysis.get("copyability_evidence")),
         "error": "",
     }
 
@@ -202,6 +210,9 @@ def error_row(token: str, exc: Exception) -> dict[str, Any]:
         "risk": "",
         "security": "",
         "entity": "",
+        "opportunity": "",
+        "copyability": "",
+        "priority": "",
         "data_quality": "",
         "liquidity_usd": "",
         "volume_24h_usd": "",
@@ -215,6 +226,7 @@ def error_row(token: str, exc: Exception) -> dict[str, Any]:
         "risk_rules": "",
         "security_rules": "",
         "entity_rules": "",
+        "copyability_rules": "",
         "error": _safe_error(exc),
     }
 

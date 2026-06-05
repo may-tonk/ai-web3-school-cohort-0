@@ -1,0 +1,11 @@
+token_address,chain,symbol,sample_type,expected_grade,expected_behavior,notes
+0x55d398326f99059ff775485246999027b3197955,bnb,USDT,mainstream,,,"Stablecoin / high-liquidity control; not expected to be a meme opportunity."
+0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c,bnb,WBNB,mainstream,,,"Wrapped native asset control; useful for liquidity and volume behavior checks."
+0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82,bnb,CAKE,mainstream,,,"BNB ecosystem token control; not expected to be a new meme opportunity."
+0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d,bnb,USDC,mainstream,,,"Stablecoin / high-liquidity control; check live API interpretation before conclusions."
+0xf500d904b07ac6214be407b69fe817a82eac7777,bnb,世界杯纪念币,risky,D,filter,"Phase 3 batch sample; behavior risk and shared-funder risk are both active."
+0x90166915b98d24d284c56de3b9f4ed59338f7777,bnb,彩蝶,risky,C,store_only,"Phase 3 batch sample; previous report was C/store_only, live market data may now downgrade it."
+0x3d96b30ba2c08724b70efff1ad16d005db1c7777,bnb,野马,risky,D,filter,"Phase 3 batch sample with low liquidity, sell pressure, early exit, and shared-funder risk."
+0x90507254e9c594e728172b9d217f4ab1a2ee7777,bnb,美蛙,risky,D,filter,"Phase 3 batch sample; low volume and entity risk make copyability weak."
+0xff6b0006d17af50a0c0082ca1beb03af3f284444,bnb,candidate_2,unknown,C,store_only,"Phase 2 cached candidate; useful for checking whether Copyability v0 is too harsh on earlier C samples."
+0x9ec5d5082895b8bf56523e02a831aa0dc8737777,bnb,candidate_3,unknown,C,store_only,"Phase 2 cached candidate; had healthier short-term flow in the original research report."

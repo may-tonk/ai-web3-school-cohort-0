@@ -1,0 +1,16 @@
+# Phase 4A.1 calibration batch 2
+# Scope: controls + selected meme/risky samples.
+# Note: these may require fresh Dune execution, so run separately from batch 1.
+
+# Mainstream / high-liquidity controls
+0x55d398326f99059ff775485246999027b3197955
+0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c
+0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82
+0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d
+
+# Cached meme/risky comparison samples
+0xf500d904b07ac6214be407b69fe817a82eac7777
+0x90166915b98d24d284c56de3b9f4ed59338f7777
+0x9ec5d5082895b8bf56523e02a831aa0dc8737777
+
+# Add fresh/high-liquidity meme candidates below after manual discovery.
