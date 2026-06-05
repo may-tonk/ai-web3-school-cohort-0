@@ -2,16 +2,16 @@
 
 ## Status
 
-Partially run.
+Run with caveat.
 
-The full Dune-backed Batch 2 command timed out after 5 minutes. No
-`batch-2-output.txt` or `batch-2-output.json` was produced.
+The full Dune-backed Batch 2 command timed out after 5 minutes at the shell
+level, but `batch-2-output.txt` was produced.
 
 Follow-up action:
 
 ```text
-Run mainstream/high-liquidity controls through Quick Screen first, then design
-lighter Dune control queries if deep analysis is still needed.
+Use the produced deep output as calibration evidence, but treat this path as
+heavy for mainstream controls. Quick Screen remains the lighter control check.
 ```
 
 ## Purpose
@@ -37,15 +37,28 @@ python scripts\batch_analyze_tokens.py --file experiments\phase4-calibration\bat
 Result:
 
 ```text
-Timed out after 5 minutes.
+Timed out after 5 minutes at the shell level, but produced
+experiments/phase4-calibration/batch-2-output.txt.
 ```
 
 Interpretation:
 
 ```text
 Existing deep Dune queries are designed around meme-token analysis and can be
-too heavy for mainstream/high-volume controls.
+slow for mainstream/high-volume controls.
 ```
+
+## Dune-Backed Output Summary
+
+| Token | Symbol | Grade | Action | Risk | Security | Entity | Opportunity | Copyability | Priority |
+|---|---:|---:|---|---:|---:|---:|---:|---:|---:|
+| `0x55d398326f99059ff775485246999027b3197955` | USDT | B | watchlist | 45 | 40 | 0 | 60 | 80 | 73 |
+| `0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c` | WBNB | D | filter | 100 | 0 | 30 | 30 | 0 | 16 |
+| `0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82` | Cake | B | watchlist | 45 | 40 | 0 | 60 | 80 | 73 |
+| `0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d` | UB | D | filter | 100 | 0 | 20 | 30 | 0 | 17 |
+| `0xf500d904b07ac6214be407b69fe817a82eac7777` | 世界杯纪念币 | D | filter | 100 | 0 | 50 | 20 | 0 | 9 |
+| `0x90166915b98d24d284c56de3b9f4ed59338f7777` | 彩蝶 | D | filter | 85 | 0 | 50 | 50 | 20 | 33 |
+| `0x9ec5d5082895b8bf56523e02a831aa0dc8737777` | 矛 | C | store_only | 65 | 0 | 50 | 35 | 33 | 40 |
 
 ## Control Quick Screen Results
 
@@ -89,6 +102,16 @@ token_profile = meme_candidate | mainstream_control | infrastructure
 
 Until then, mainstream controls should be used to inspect individual rule
 behavior, not to assign final A/B/C/D opportunity grades.
+
+The Dune-backed output also confirms:
+
+```text
+Copyability v0 does not automatically collapse all high-liquidity controls to 0.
+USDT and CAKE both reached copyability 80.
+```
+
+The issue is not only score strictness. The issue is that mainstream tokens need
+different interpretation from meme candidates.
 
 ## Rule Tuning Decision
 
