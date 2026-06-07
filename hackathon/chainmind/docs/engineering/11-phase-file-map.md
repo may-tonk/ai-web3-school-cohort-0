@@ -508,6 +508,61 @@ Add GoPlus address_security for early-buyer wallet risk.
 Keep automated trading in a separate future phase.
 ```
 
+## Phase 4B.1: GMGN Evidence Scoring
+
+### Status
+
+```text
+Implemented
+Validated on one risky/meme cached token
+```
+
+### Purpose
+
+Let GMGN wallet/trader signals appear in scoring evidence without allowing them
+to override risk, security, entity, or Dune validation evidence.
+
+### Main Docs / Artifacts
+
+```text
+docs/progress/2026-06-07-phase4b1-gmgn-scoring-report.md
+experiments/phase4-calibration/gmgn-scoring-sample-snapshot.json
+```
+
+### Main Code
+
+```text
+src/chainmind/scoring/copyability.py
+src/chainmind/scoring/priority.py
+src/chainmind/orchestration/analyze_token.py
+```
+
+### Main Tests
+
+```text
+tests/unit/test_copyability_scoring.py
+tests/unit/test_priority_scoring.py
+```
+
+### Main Output Fields
+
+```text
+copyability_evidence[].rule_id = copyability_gmgn_smart_wallet_signal
+copyability_evidence[].rule_id = copyability_gmgn_top_trader_signal
+copyability_evidence[].rule_id = copyability_gmgn_risky_wallet_signal
+priority_evidence[].rule_id = priority_gmgn_smart_wallet_signal
+priority_evidence[].rule_id = priority_gmgn_top_trader_signal
+priority_evidence[].rule_id = priority_gmgn_risky_wallet_penalty
+priority_evidence[].rule_id = priority_gmgn_positive_signal_blocked_by_risk
+```
+
+### Guardrail
+
+```text
+If risk_score >= 70 or security_score >= 70, GMGN positive priority bonuses are
+blocked and recorded as neutral evidence.
+```
+
 ## Phase 5: Report Generation
 
 ### Status

@@ -108,3 +108,48 @@ def test_missing_flow_does_not_crash():
 
     assert result.score >= 0
     assert "copyability_missing_flow" in _rule_ids(result)
+
+
+def test_gmgn_smart_wallet_and_top_trader_signals_raise_copyability_slightly():
+    baseline = calculate_copyability_score(_snapshot())
+    result = calculate_copyability_score(
+        _snapshot(
+            intelligence={
+                "gmgn": {
+                    "smart_wallet_count": 1,
+                    "top_trader_count": 3,
+                    "sniper_count": 0,
+                    "insider_count": 0,
+                    "bundled_wallet_count": 0,
+                }
+            }
+        )
+    )
+
+    assert "copyability_gmgn_smart_wallet_signal" in _rule_ids(result)
+    assert "copyability_gmgn_top_trader_signal" in _rule_ids(result)
+    assert result.score >= baseline.score
+
+
+def test_gmgn_risky_wallet_signals_lower_copyability():
+    base_snapshot = _snapshot(
+        market={"liquidity_usd": 30_000, "volume_24h_usd": 10_000}
+    )
+    baseline = calculate_copyability_score(base_snapshot)
+    result = calculate_copyability_score(
+        _snapshot(
+            market={"liquidity_usd": 30_000, "volume_24h_usd": 10_000},
+            intelligence={
+                "gmgn": {
+                    "smart_wallet_count": 2,
+                    "top_trader_count": 4,
+                    "sniper_count": 1,
+                    "insider_count": 1,
+                    "bundled_wallet_count": 1,
+                }
+            },
+        )
+    )
+
+    assert "copyability_gmgn_risky_wallet_signal" in _rule_ids(result)
+    assert result.score < baseline.score

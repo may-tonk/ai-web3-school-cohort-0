@@ -14,6 +14,7 @@ def calculate_priority_score(
     copyability_score: int = 0,
     entity_cluster_score: int = 0,
     security_score: int = 0,
+    wallet_signal: dict[str, Any] | None = None,
 ) -> ScoreResult:
     evidence: list[dict[str, Any]] = []
 
@@ -67,6 +68,13 @@ def calculate_priority_score(
             threshold="weighted",
         )
     )
+    evidence.extend(
+        _score_wallet_signal(
+            wallet_signal=wallet_signal or {},
+            risk_score=risk_score,
+            security_score=security_score,
+        )
+    )
 
     score = 50 + sum(int(item["score_delta"]) for item in evidence)
     score = max(0, min(score, 100))
@@ -117,6 +125,83 @@ def _evidence(
         "value": value,
         "threshold": threshold,
     }
+
+
+def _score_wallet_signal(
+    *,
+    wallet_signal: dict[str, Any],
+    risk_score: int,
+    security_score: int,
+) -> list[dict[str, Any]]:
+    gmgn = dict(wallet_signal.get("gmgn") or {})
+    if not gmgn:
+        return []
+
+    evidence: list[dict[str, Any]] = []
+    smart_wallet_count = int(_number_or_zero(gmgn.get("smart_wallet_count")))
+    top_trader_count = int(_number_or_zero(gmgn.get("top_trader_count")))
+    sniper_count = int(_number_or_zero(gmgn.get("sniper_count")))
+    insider_count = int(_number_or_zero(gmgn.get("insider_count")))
+    bundled_wallet_count = int(_number_or_zero(gmgn.get("bundled_wallet_count")))
+    risky_wallet_count = sniper_count + insider_count + bundled_wallet_count
+    high_risk_context = security_score >= 70 or risk_score >= 70
+
+    if smart_wallet_count > 0 and not high_risk_context:
+        evidence.append(
+            _evidence(
+                rule_id="priority_gmgn_smart_wallet_signal",
+                severity="positive",
+                score_delta=5,
+                metric="gmgn.smart_wallet_count",
+                value=smart_wallet_count,
+                threshold=1,
+            )
+        )
+
+    if top_trader_count >= 3 and not high_risk_context:
+        evidence.append(
+            _evidence(
+                rule_id="priority_gmgn_top_trader_signal",
+                severity="positive",
+                score_delta=3,
+                metric="gmgn.top_trader_count",
+                value=top_trader_count,
+                threshold=3,
+            )
+        )
+
+    if risky_wallet_count > 0:
+        evidence.append(
+            _evidence(
+                rule_id="priority_gmgn_risky_wallet_penalty",
+                severity="negative",
+                score_delta=-8,
+                metric="gmgn.risky_wallet_count",
+                value=risky_wallet_count,
+                threshold=0,
+            )
+        )
+
+    if high_risk_context and (smart_wallet_count > 0 or top_trader_count >= 3):
+        evidence.append(
+            _evidence(
+                rule_id="priority_gmgn_positive_signal_blocked_by_risk",
+                severity="neutral",
+                score_delta=0,
+                metric="risk_or_security_score",
+                value={"risk_score": risk_score, "security_score": security_score},
+                threshold="<70",
+            )
+        )
+
+    return evidence
+
+
+def _number_or_zero(value: Any) -> float:
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return 0
 
 
 def _debug_reason(evidence: dict[str, Any]) -> str:

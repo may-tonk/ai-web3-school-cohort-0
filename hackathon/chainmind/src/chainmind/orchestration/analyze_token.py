@@ -25,6 +25,7 @@ def analyze_token(snapshot: TokenSnapshot) -> AnalysisResult:
         copyability_score=copyability.score,
         entity_cluster_score=entity_cluster.score,
         security_score=security.score,
+        wallet_signal={"gmgn": dict(snapshot.intelligence.get("gmgn") or {})},
     )
     grade, action = grade_from_scores(
         risk.score,

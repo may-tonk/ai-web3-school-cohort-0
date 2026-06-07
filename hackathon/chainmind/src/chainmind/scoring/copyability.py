@@ -25,6 +25,7 @@ def calculate_copyability_score(snapshot: TokenSnapshot) -> ScoreResult:
     evidence.extend(_score_latest_flow(snapshot))
     evidence.extend(_score_early_buyers(snapshot))
     evidence.extend(_score_funding(snapshot))
+    evidence.extend(_score_gmgn_wallet_intelligence(snapshot))
 
     score = BASE_COPYABILITY_SCORE + sum(int(item["score_delta"]) for item in evidence)
     score = max(MIN_COPYABILITY_SCORE, min(score, MAX_COPYABILITY_SCORE))
@@ -361,6 +362,63 @@ def _score_funding(snapshot: TokenSnapshot) -> list[dict[str, Any]]:
                 metric="new_wallet_ratio",
                 value=round(new_wallet_ratio, 4),
                 threshold=0.6,
+            )
+        )
+
+    return evidence
+
+
+def _score_gmgn_wallet_intelligence(snapshot: TokenSnapshot) -> list[dict[str, Any]]:
+    gmgn = dict(snapshot.intelligence.get("gmgn") or {})
+    if not gmgn:
+        return []
+
+    evidence: list[dict[str, Any]] = []
+    smart_wallet_count = int(_float_or_none(gmgn.get("smart_wallet_count")) or 0)
+    top_trader_count = int(_float_or_none(gmgn.get("top_trader_count")) or 0)
+    sniper_count = int(_float_or_none(gmgn.get("sniper_count")) or 0)
+    insider_count = int(_float_or_none(gmgn.get("insider_count")) or 0)
+    bundled_wallet_count = int(_float_or_none(gmgn.get("bundled_wallet_count")) or 0)
+    risky_wallet_count = sniper_count + insider_count + bundled_wallet_count
+
+    if smart_wallet_count > 0:
+        evidence.append(
+            _evidence(
+                rule_id="copyability_gmgn_smart_wallet_signal",
+                severity="positive",
+                score_delta=5,
+                metric="gmgn.smart_wallet_count",
+                value=smart_wallet_count,
+                threshold=1,
+            )
+        )
+
+    if top_trader_count >= 3:
+        evidence.append(
+            _evidence(
+                rule_id="copyability_gmgn_top_trader_signal",
+                severity="positive",
+                score_delta=5,
+                metric="gmgn.top_trader_count",
+                value=top_trader_count,
+                threshold=3,
+            )
+        )
+
+    if risky_wallet_count > 0:
+        evidence.append(
+            _evidence(
+                rule_id="copyability_gmgn_risky_wallet_signal",
+                severity="high" if risky_wallet_count >= 3 else "medium",
+                score_delta=-15 if risky_wallet_count >= 3 else -8,
+                metric="gmgn.risky_wallet_count",
+                value=risky_wallet_count,
+                threshold=0,
+                context={
+                    "sniper_count": sniper_count,
+                    "insider_count": insider_count,
+                    "bundled_wallet_count": bundled_wallet_count,
+                },
             )
         )
 
