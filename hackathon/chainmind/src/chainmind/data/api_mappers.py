@@ -173,6 +173,33 @@ def map_nansen_token_intelligence(payload: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def map_gmgn_token_intelligence(payload: dict[str, Any]) -> dict[str, Any]:
+    token_info = payload.get("token_info") or {}
+    token_security = payload.get("token_security") or {}
+    top_holders = _gmgn_rows(payload.get("top_holders"))
+    top_traders = _gmgn_rows(payload.get("top_traders"))
+    wallet_rows = top_holders + top_traders
+
+    return {
+        "source": "gmgn",
+        "top_holder_count": len(top_holders),
+        "top_trader_count": len(top_traders),
+        "smart_wallet_count": _count_gmgn_signal(wallet_rows, "smart"),
+        "sniper_count": _count_gmgn_signal(wallet_rows, "sniper"),
+        "insider_count": _count_gmgn_signal(wallet_rows, "insider"),
+        "bundled_wallet_count": _count_gmgn_signal(wallet_rows, "bundled"),
+        "has_wallet_signal": bool(top_holders or top_traders),
+        "has_risk_wallet_signal": any(
+            _count_gmgn_signal(wallet_rows, signal) > 0
+            for signal in ("sniper", "insider", "bundled")
+        ),
+        "token_info_sample": _compact_gmgn_object(token_info),
+        "token_security_sample": _compact_gmgn_object(token_security),
+        "top_holders_sample": [_compact_gmgn_wallet_row(row) for row in top_holders[:5]],
+        "top_traders_sample": [_compact_gmgn_wallet_row(row) for row in top_traders[:5]],
+    }
+
+
 def _map_txn_window(value: Any) -> dict[str, int | None]:
     data = dict(value or {})
     return {
@@ -254,6 +281,32 @@ def _rows(payload: dict[str, Any]) -> list[dict[str, Any]]:
     return []
 
 
+def _gmgn_rows(payload: Any) -> list[dict[str, Any]]:
+    if isinstance(payload, list):
+        return [dict(row) for row in payload if isinstance(row, dict)]
+    if not isinstance(payload, dict):
+        return []
+
+    for key in (
+        "data",
+        "result",
+        "rows",
+        "items",
+        "list",
+        "tokens",
+        "holders",
+        "traders",
+    ):
+        value = payload.get(key)
+        if isinstance(value, list):
+            return [dict(row) for row in value if isinstance(row, dict)]
+        if isinstance(value, dict):
+            nested = _gmgn_rows(value)
+            if nested:
+                return nested
+    return []
+
+
 def _compact_nansen_row(row: dict[str, Any]) -> dict[str, Any]:
     preferred_keys = [
         "address",
@@ -277,3 +330,156 @@ def _compact_nansen_row(row: dict[str, Any]) -> dict[str, Any]:
     if compact:
         return compact
     return dict(list(row.items())[:8])
+
+
+def _compact_gmgn_object(value: Any) -> dict[str, Any]:
+    if not isinstance(value, dict):
+        return {}
+
+    data = value
+    for key in ("data", "result", "token"):
+        nested = data.get(key)
+        if isinstance(nested, dict):
+            data = nested
+            break
+
+    preferred_keys = [
+        "address",
+        "token_address",
+        "symbol",
+        "name",
+        "price",
+        "price_usd",
+        "market_cap",
+        "market_cap_usd",
+        "fdv",
+        "liquidity",
+        "liquidity_usd",
+        "volume_24h",
+        "volume_24h_usd",
+        "holder_count",
+        "is_honeypot",
+        "buy_tax",
+        "sell_tax",
+        "renounced",
+        "open_source",
+    ]
+    compact = {
+        key: _clean_gmgn_value(key, data.get(key))
+        for key in preferred_keys
+        if data.get(key) is not None
+    }
+    if compact:
+        return compact
+    return dict(list(data.items())[:8])
+
+
+def _compact_gmgn_wallet_row(row: dict[str, Any]) -> dict[str, Any]:
+    preferred_keys = [
+        "address",
+        "wallet",
+        "wallet_address",
+        "label",
+        "labels",
+        "tags",
+        "balance",
+        "balance_usd",
+        "amount",
+        "amount_usd",
+        "holding_percentage",
+        "percentage",
+        "pnl",
+        "pnl_usd",
+        "realized_pnl",
+        "realized_profit",
+        "win_rate",
+        "profit_rate",
+        "volume_usd",
+        "buy_volume_usd",
+        "sell_volume_usd",
+        "buys",
+        "sells",
+        "tx_count",
+        "is_smart_wallet",
+        "is_smart_money",
+        "is_sniper",
+        "is_insider",
+        "is_bundled",
+    ]
+    compact = {
+        key: _clean_gmgn_value(key, row.get(key))
+        for key in preferred_keys
+        if row.get(key) is not None
+    }
+    if compact:
+        return compact
+    return dict(list(row.items())[:8])
+
+
+def _clean_gmgn_value(key: str, value: Any) -> Any:
+    if key in {"address", "wallet", "wallet_address", "token_address"}:
+        return clean_address(value)
+    if key.startswith("is_") or key in {"renounced", "open_source"}:
+        return _flag(value)
+    if key in {
+        "balance",
+        "balance_usd",
+        "amount",
+        "amount_usd",
+        "holding_percentage",
+        "percentage",
+        "pnl",
+        "pnl_usd",
+        "realized_pnl",
+        "realized_profit",
+        "win_rate",
+        "profit_rate",
+        "volume_usd",
+        "buy_volume_usd",
+        "sell_volume_usd",
+        "price",
+        "price_usd",
+        "market_cap",
+        "market_cap_usd",
+        "fdv",
+        "liquidity",
+        "liquidity_usd",
+        "volume_24h",
+        "volume_24h_usd",
+        "buy_tax",
+        "sell_tax",
+    }:
+        return clean_float(value)
+    if key in {"buys", "sells", "tx_count", "holder_count"}:
+        return clean_int(value)
+    return value
+
+
+def _count_gmgn_signal(rows: list[dict[str, Any]], signal: str) -> int:
+    return sum(1 for row in rows if _has_gmgn_signal(row, signal))
+
+
+def _has_gmgn_signal(row: dict[str, Any], signal: str) -> bool:
+    boolean_keys = {
+        "smart": ("is_smart_wallet", "is_smart_money", "smart_wallet", "smart_money"),
+        "sniper": ("is_sniper", "sniper"),
+        "insider": ("is_insider", "insider"),
+        "bundled": ("is_bundled", "bundled", "bundle"),
+    }[signal]
+    if any(_flag(row.get(key)) is True for key in boolean_keys):
+        return True
+
+    labels: list[str] = []
+    for key in ("label", "labels", "tag", "tags", "wallet_type", "type"):
+        value = row.get(key)
+        if isinstance(value, list):
+            labels.extend(str(item).lower() for item in value)
+        elif value:
+            labels.append(str(value).lower())
+
+    joined = " ".join(labels)
+    if signal == "smart":
+        return "smart" in joined or "kol" in joined or "alpha" in joined
+    if signal == "bundled":
+        return "bundled" in joined or "bundle" in joined
+    return signal in joined

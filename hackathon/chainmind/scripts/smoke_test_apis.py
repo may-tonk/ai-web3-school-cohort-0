@@ -6,7 +6,7 @@ import argparse
 import json
 import os
 import sys
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, replace
 from pathlib import Path
 from typing import Any, Callable, Sequence
 
@@ -17,6 +17,7 @@ if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
 from chainmind.data.env import load_dotenv
+from chainmind.data.gmgn_client import GmgnClient
 from chainmind.data.http_json import get_json, post_json
 
 
@@ -230,14 +231,14 @@ def check_nansen(timeout_seconds: int) -> SmokeResult:
     return SmokeResult("Nansen", "PASS", f"smart-money holdings reachable; rows={rows}")
 
 
-def check_gmgn() -> SmokeResult:
-    if not require_env("GMGN_API_KEY"):
+def check_gmgn(timeout_seconds: int) -> SmokeResult:
+    client = GmgnClient.from_env()
+    if client is None:
         return SmokeResult("GMGN", "SKIP", "GMGN_API_KEY is empty")
-    return SmokeResult(
-        "GMGN",
-        "SKIP",
-        "configured, but signed request smoke test is not implemented yet",
-    )
+    client = GmgnClient(replace(client.config, timeout_seconds=timeout_seconds))
+    payload = client.get_trending_tokens(limit=3)
+    rows = _count_nested_rows(payload)
+    return SmokeResult("GMGN", "PASS", f"query-only trending reachable; rows={rows}")
 
 
 def run_smoke_tests(token_address: str, timeout_seconds: int) -> list[SmokeResult]:
@@ -249,7 +250,7 @@ def run_smoke_tests(token_address: str, timeout_seconds: int) -> list[SmokeResul
         ("BNB RPC", lambda: check_bnb_rpc(token_address, timeout_seconds)),
         ("Etherscan V2", lambda: check_etherscan(timeout_seconds)),
         ("Nansen", lambda: check_nansen(timeout_seconds)),
-        ("GMGN", check_gmgn),
+        ("GMGN", lambda: check_gmgn(timeout_seconds)),
     ]
     return [run_check(service, check) for service, check in checks]
 
@@ -261,6 +262,18 @@ def print_table(results: Sequence[SmokeResult]) -> None:
     print(f"{'-' * service_width}  {'-' * status_width}  {'-' * 60}")
     for item in results:
         print(f"{item.service:<{service_width}}  {item.status:<{status_width}}  {item.detail}")
+
+
+def _count_nested_rows(value: Any) -> int:
+    if isinstance(value, list):
+        return len(value)
+    if not isinstance(value, dict):
+        return 0
+    for key in ("data", "result", "tokens", "rank", "items", "rows"):
+        rows = _count_nested_rows(value.get(key))
+        if rows:
+            return rows
+    return 0
 
 
 def build_parser() -> argparse.ArgumentParser:

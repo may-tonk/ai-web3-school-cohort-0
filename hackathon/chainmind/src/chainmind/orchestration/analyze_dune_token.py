@@ -11,6 +11,7 @@ from typing import Any
 from chainmind.data.api_mappers import (
     map_bnb_rpc_contract_state,
     map_dexscreener_pairs_to_market,
+    map_gmgn_token_intelligence,
     map_goplus_token_security,
     map_honeypot_status,
     map_nansen_token_intelligence,
@@ -19,6 +20,7 @@ from chainmind.data.bnb_rpc_client import BnbRpcClient
 from chainmind.data.dexscreener_client import DexScreenerClient
 from chainmind.data.dune_client import DuneClient, DuneConfig
 from chainmind.data.dune_mappers import build_snapshot_from_dune_results
+from chainmind.data.gmgn_client import GmgnClient
 from chainmind.data.goplus_client import GoPlusClient
 from chainmind.data.honeypot_client import HoneypotClient
 from chainmind.data.nansen_client import NansenClient
@@ -105,6 +107,7 @@ def analyze_dune_token(
     market_client: Any | None = None,
     security_client: Any | None = None,
     honeypot_client: Any | None = None,
+    gmgn_client: Any | None = None,
     intelligence_client: Any | None = None,
     rpc_client: Any | None = None,
     log: Callable[[str], None] | None = None,
@@ -166,6 +169,7 @@ def analyze_dune_token(
         market_client=market_client,
         security_client=security_client,
         honeypot_client=honeypot_client,
+        gmgn_client=gmgn_client,
         intelligence_client=intelligence_client,
         rpc_client=rpc_client,
         log=log,
@@ -192,6 +196,10 @@ def build_security_client_from_env() -> GoPlusClient:
 
 def build_honeypot_client_from_env() -> HoneypotClient:
     return HoneypotClient.from_env()
+
+
+def build_gmgn_client_from_env() -> GmgnClient | None:
+    return GmgnClient.from_env()
 
 
 def build_intelligence_client_from_env() -> NansenClient | None:
@@ -287,6 +295,7 @@ def _merge_optional_api_data(
     market_client: Any | None,
     security_client: Any | None,
     honeypot_client: Any | None,
+    gmgn_client: Any | None,
     intelligence_client: Any | None,
     rpc_client: Any | None,
     log: Callable[[str], None] | None,
@@ -338,6 +347,19 @@ def _merge_optional_api_data(
                 f"Honeypot.is API failed: {exc}"
             )
             _log(log, f"Honeypot.is API failed: {exc}")
+
+    if gmgn_client is not None:
+        try:
+            payload = gmgn_client.get_token_intelligence(
+                chain=chain,
+                token_address=token_address,
+            )
+            gmgn = map_gmgn_token_intelligence(payload)
+            snapshot_payload.setdefault("intelligence", {})["gmgn"] = gmgn
+            _log(log, "Merged GMGN query-only intelligence data.")
+        except Exception as exc:  # noqa: BLE001 - API enrichment must not stop analysis.
+            _append_api_warning(snapshot_payload, f"GMGN API failed: {exc}")
+            _log(log, f"GMGN API failed: {exc}")
 
     if intelligence_client is not None:
         try:

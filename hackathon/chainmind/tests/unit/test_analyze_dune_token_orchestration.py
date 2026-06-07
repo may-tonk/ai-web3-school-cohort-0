@@ -107,6 +107,32 @@ class FakeIntelligenceClient:
         }
 
 
+class FakeGmgnClient:
+    def get_token_intelligence(self, chain, token_address):
+        return {
+            "token_info": {"data": {"address": token_address, "symbol": "TEST"}},
+            "token_security": {"data": {"is_honeypot": "0"}},
+            "top_holders": {
+                "data": [
+                    {
+                        "wallet_address": "0xSmart",
+                        "labels": ["Smart Trader"],
+                        "balance_usd": "1000",
+                    }
+                ]
+            },
+            "top_traders": {
+                "data": [
+                    {
+                        "wallet": "0xSniper",
+                        "is_sniper": True,
+                        "pnl_usd": "123",
+                    }
+                ]
+            },
+        }
+
+
 class FailingApiClient:
     def get_token_pairs(self, chain, token_address):
         raise RuntimeError("market unavailable")
@@ -209,6 +235,7 @@ def test_analyze_dune_token_merges_optional_api_data(tmp_path):
         market_client=FakeMarketClient(),
         security_client=FakeSecurityClient(),
         honeypot_client=FakeHoneypotClient(),
+        gmgn_client=FakeGmgnClient(),
         intelligence_client=FakeIntelligenceClient(),
         rpc_client=FakeRpcClient(),
     )
@@ -222,6 +249,9 @@ def test_analyze_dune_token_merges_optional_api_data(tmp_path):
     assert result.snapshot["contract"]["owner_renounced"] is True
     assert result.snapshot["security"]["sell_tax"] == 0.05
     assert result.snapshot["security"]["honeypot_sell_tax_raw"] == 4.0
+    assert result.snapshot["intelligence"]["gmgn"]["has_wallet_signal"] is True
+    assert result.snapshot["intelligence"]["gmgn"]["top_trader_count"] == 1
+    assert result.snapshot["intelligence"]["gmgn"]["sniper_count"] == 1
     assert result.snapshot["intelligence"]["nansen"]["has_smart_money_signal"] is True
     assert result.snapshot["holders"]["holder_count"] == 100
     assert result.analysis.risk_score >= 70
@@ -236,13 +266,14 @@ def test_analyze_dune_token_records_api_warnings_without_failing(tmp_path):
         market_client=FailingApiClient(),
         security_client=FailingApiClient(),
         honeypot_client=FailingApiClient(),
+        gmgn_client=FailingApiClient(),
         intelligence_client=FailingApiClient(),
         rpc_client=FailingApiClient(),
     )
 
     assert result.snapshot["token"]["address"] == "0xabc"
     assert "api_warnings" in result.snapshot["data_quality"]
-    assert len(result.snapshot["data_quality"]["api_warnings"]) == 5
+    assert len(result.snapshot["data_quality"]["api_warnings"]) == 6
     assert any(
         "market unavailable" in warning
         for warning in result.analysis.data_quality["warnings"]

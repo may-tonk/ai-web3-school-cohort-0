@@ -386,19 +386,97 @@ experiments/phase4-calibration/labels.csv
 The first implementation should be light. Use `token_profile` for explanation
 and rule boundaries before making it a major scoring refactor.
 
-## Phase 4B: Wallet Alpha Snapshot Design
+## Phase 4B: GMGN Query-Only Wallet Alpha v0
 
 ### Status
 
 ```text
-Not started
+Implemented
+Validated on one BNB control token
 ```
 
 ### Purpose
 
-Design wallet-level alpha fields before integrating new data sources.
+Add a query-only wallet intelligence layer so ChainMind can keep analyzing
+wallet and trader signals when Nansen credits are unavailable.
 
-### Proposed Future Fields
+Phase 4B does not include trading, swap execution, private-key loading, auto
+buy, auto sell, or copy-trading execution.
+
+### Main Docs / Artifacts
+
+```text
+docs/progress/2026-06-07-phase4b-gmgn-wallet-alpha-plan.md
+docs/progress/2026-06-07-phase4b-completion-report.md
+experiments/phase4-calibration/gmgn-batch-1-results.md
+experiments/phase4-calibration/gmgn-batch-1-snapshot.json
+```
+
+### Main Code
+
+```text
+src/chainmind/data/gmgn_client.py
+src/chainmind/data/api_mappers.py
+src/chainmind/orchestration/analyze_dune_token.py
+src/chainmind/data/__init__.py
+```
+
+### Main Scripts
+
+```text
+scripts/smoke_test_apis.py
+scripts/analyze_dune_token.py
+```
+
+### Main Tests
+
+```text
+tests/unit/test_api_clients.py
+tests/unit/test_api_mappers.py
+tests/unit/test_analyze_dune_token_orchestration.py
+```
+
+### Main Output Fields
+
+```text
+snapshot.intelligence.gmgn.source
+snapshot.intelligence.gmgn.top_holder_count
+snapshot.intelligence.gmgn.top_trader_count
+snapshot.intelligence.gmgn.smart_wallet_count
+snapshot.intelligence.gmgn.sniper_count
+snapshot.intelligence.gmgn.insider_count
+snapshot.intelligence.gmgn.bundled_wallet_count
+snapshot.intelligence.gmgn.has_wallet_signal
+snapshot.intelligence.gmgn.has_risk_wallet_signal
+snapshot.intelligence.gmgn.token_info_sample
+snapshot.intelligence.gmgn.token_security_sample
+snapshot.intelligence.gmgn.top_holders_sample
+snapshot.intelligence.gmgn.top_traders_sample
+```
+
+### Validated Behavior
+
+```text
+GMGN query-only trending smoke test passes.
+GMGN token intelligence can merge into analyze_dune_token output.
+Nansen insufficient credits are recorded as warnings and do not block analysis.
+ChainMind chain "bnb" maps to GMGN chain "bsc".
+Windows can run gmgn-cli through GMGN_CLI_COMMAND=npx gmgn-cli.
+```
+
+### Data Source Roles
+
+```text
+GMGN   = wallet intelligence, top traders, top holders, trending, portfolio/activity
+GoPlus = token/address/security risk
+Dune   = deep validation, early buyers, funding, retention
+Nansen = optional smart-money enrichment when credits are available
+```
+
+### Future Wallet Alpha Fields
+
+These remain future fields. Phase 4B created the data-source foundation but did
+not complete full wallet alpha scoring.
 
 ```text
 wallet_address
@@ -415,10 +493,19 @@ copyability_penalty
 ### Candidate Data Sources
 
 ```text
-GMGN signed API
+GMGN query-only CLI
 Nansen smart money when credits are available
 Dune wallet-history queries
 local labeled sample dataset
+```
+
+### Next Recommendations
+
+```text
+Run GMGN validation on meme/new-pool tokens.
+Add small GMGN-derived priority/copyability evidence.
+Add GoPlus address_security for early-buyer wallet risk.
+Keep automated trading in a separate future phase.
 ```
 
 ## Phase 5: Report Generation

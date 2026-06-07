@@ -4,6 +4,7 @@ from chainmind.data.bnb_rpc_client import BnbRpcClient, BnbRpcConfig
 from chainmind.data.dexscreener_client import DexScreenerClient, DexScreenerConfig
 from chainmind.data.dune_client import DuneClient, DuneConfig
 from chainmind.data.dune_mappers import build_snapshot_from_dune_results
+from chainmind.data.gmgn_client import GmgnClient, GmgnConfig
 from chainmind.data.goplus_client import GoPlusClient, GoPlusConfig
 from chainmind.data.honeypot_client import HoneypotClient, HoneypotConfig
 from chainmind.data.nansen_client import NansenClient, NansenConfig
@@ -17,6 +18,8 @@ __all__ = [
     "DuneClient",
     "DuneConfig",
     "DuneQueryCache",
+    "GmgnClient",
+    "GmgnConfig",
     "GoPlusClient",
     "GoPlusConfig",
     "HoneypotClient",

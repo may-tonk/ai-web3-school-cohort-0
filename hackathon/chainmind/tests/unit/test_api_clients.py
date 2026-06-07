@@ -1,4 +1,5 @@
 from chainmind.data.dexscreener_client import DexScreenerClient, DexScreenerConfig
+from chainmind.data.gmgn_client import GmgnClient, GmgnConfig
 from chainmind.data.goplus_client import GoPlusClient, GoPlusConfig
 from chainmind.data.honeypot_client import HoneypotClient, HoneypotConfig
 from chainmind.data.nansen_client import NansenClient, NansenConfig
@@ -48,6 +49,101 @@ def test_goplus_client_from_env_reads_access_token(monkeypatch):
 
     assert client.config.base_url == "https://example.goplus"
     assert client.config.api_key == "access-token"
+
+
+def test_gmgn_client_from_env_reads_query_credentials_only(monkeypatch):
+    monkeypatch.setenv("GMGN_API_KEY", "gmgn-key")
+    monkeypatch.setenv("GMGN_CHAIN", "bsc")
+    monkeypatch.setenv("GMGN_CLI_COMMAND", "npx gmgn-cli")
+    monkeypatch.setenv("GMGN_PRIVATE_KEY_PATH", "runtime/keys/private.pem")
+
+    client = GmgnClient.from_env()
+
+    assert client is not None
+    assert client.config.api_key == "gmgn-key"
+    assert client.config.chain == "bsc"
+    assert client.config.cli_command == ("npx", "gmgn-cli")
+
+
+def test_gmgn_client_runs_query_only_cli_and_strips_private_key_env(monkeypatch):
+    calls = []
+
+    class Completed:
+        returncode = 0
+        stdout = '{"data":[{"address":"0xToken"}]}'
+        stderr = ""
+
+    def fake_run(command, **kwargs):
+        calls.append((command, kwargs))
+        return Completed()
+
+    monkeypatch.setattr("chainmind.data.gmgn_client.subprocess.run", fake_run)
+    monkeypatch.setenv("GMGN_PRIVATE_KEY_PATH", "runtime/keys/private.pem")
+    monkeypatch.setenv("GMGN_PRIVATE_KEY", "private-key")
+
+    client = GmgnClient(
+        GmgnConfig(
+            api_key="gmgn-key",
+            chain="bsc",
+            cli_command=("gmgn-cli",),
+            timeout_seconds=12,
+        )
+    )
+    payload = client.get_trending_tokens(limit=3)
+
+    assert payload == {"data": [{"address": "0xToken"}]}
+    assert calls[0][0] == [
+        "gmgn-cli",
+        "market",
+        "trending",
+        "--chain",
+        "bsc",
+        "--interval",
+        "1h",
+        "--limit",
+        "3",
+        "--raw",
+    ]
+    assert calls[0][1]["timeout"] == 12
+    assert calls[0][1]["env"]["GMGN_API_KEY"] == "gmgn-key"
+    assert "GMGN_PRIVATE_KEY_PATH" not in calls[0][1]["env"]
+    assert "GMGN_PRIVATE_KEY" not in calls[0][1]["env"]
+
+
+def test_gmgn_client_builds_token_intelligence_queries(monkeypatch):
+    commands = []
+
+    class Completed:
+        returncode = 0
+        stdout = '{"ok":true}'
+        stderr = ""
+
+    def fake_run(command, **kwargs):
+        commands.append(command)
+        return Completed()
+
+    monkeypatch.setattr("chainmind.data.gmgn_client.subprocess.run", fake_run)
+
+    client = GmgnClient(GmgnConfig(api_key="gmgn-key", cli_command=("gmgn-cli",)))
+    payload = client.get_token_intelligence(token_address="0xToken", limit=5)
+
+    assert payload == {
+        "token_info": {"ok": True},
+        "token_security": {"ok": True},
+        "top_holders": {"ok": True},
+        "top_traders": {"ok": True},
+    }
+    assert commands[0][:6] == ["gmgn-cli", "token", "info", "--chain", "bsc", "--address"]
+    assert commands[1][:6] == [
+        "gmgn-cli",
+        "token",
+        "security",
+        "--chain",
+        "bsc",
+        "--address",
+    ]
+    assert commands[2][-3:] == ["--limit", "5", "--raw"]
+    assert commands[3][-3:] == ["--limit", "5", "--raw"]
 
 
 def test_honeypot_client_builds_status_request(monkeypatch):

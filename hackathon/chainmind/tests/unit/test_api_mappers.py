@@ -1,6 +1,7 @@
 from chainmind.data.api_mappers import (
     map_bnb_rpc_contract_state,
     map_dexscreener_pairs_to_market,
+    map_gmgn_token_intelligence,
     map_goplus_token_security,
     map_honeypot_status,
     map_nansen_token_intelligence,
@@ -146,3 +147,59 @@ def test_map_nansen_token_intelligence_summarizes_rows():
     assert mapped["tgm_smart_money_holder_count"] == 1
     assert mapped["has_smart_money_signal"] is True
     assert mapped["smart_money_holdings_sample"][0]["wallet_address"] == "0xSmart"
+
+
+def test_map_gmgn_token_intelligence_summarizes_wallet_signals():
+    mapped = map_gmgn_token_intelligence(
+        {
+            "token_info": {
+                "data": {
+                    "address": "0xToken",
+                    "symbol": "MEME",
+                    "liquidity_usd": "50000",
+                }
+            },
+            "token_security": {"data": {"is_honeypot": "0", "sell_tax": "0.03"}},
+            "top_holders": {
+                "data": [
+                    {
+                        "wallet_address": "0xSmart",
+                        "labels": ["Smart Trader"],
+                        "balance_usd": "1000",
+                    },
+                    {
+                        "wallet_address": "0xBundle",
+                        "tags": ["bundled"],
+                    },
+                ]
+            },
+            "top_traders": {
+                "result": {
+                    "traders": [
+                        {
+                            "wallet": "0xSniper",
+                            "is_sniper": True,
+                            "pnl_usd": "123.45",
+                            "win_rate": "0.66",
+                        },
+                        {
+                            "wallet": "0xInsider",
+                            "label": "insider",
+                        },
+                    ]
+                }
+            },
+        }
+    )
+
+    assert mapped["source"] == "gmgn"
+    assert mapped["top_holder_count"] == 2
+    assert mapped["top_trader_count"] == 2
+    assert mapped["smart_wallet_count"] == 1
+    assert mapped["sniper_count"] == 1
+    assert mapped["insider_count"] == 1
+    assert mapped["bundled_wallet_count"] == 1
+    assert mapped["has_wallet_signal"] is True
+    assert mapped["has_risk_wallet_signal"] is True
+    assert mapped["token_info_sample"]["liquidity_usd"] == 50000.0
+    assert mapped["top_traders_sample"][0]["wallet"] == "0xsniper"

@@ -19,6 +19,7 @@ from chainmind.orchestration.analyze_dune_token import (
     DuneTokenAnalysisConfig,
     analyze_dune_token,
     build_client_from_env,
+    build_gmgn_client_from_env,
     build_honeypot_client_from_env,
     build_intelligence_client_from_env,
     build_market_client_from_env,
@@ -70,6 +71,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         market_client=build_market_client_from_env(),
         security_client=build_security_client_from_env(),
         honeypot_client=build_honeypot_client_from_env(),
+        gmgn_client=build_gmgn_client_from_env(),
         intelligence_client=build_intelligence_client_from_env(),
         rpc_client=build_rpc_client_from_env(),
         log=print,
@@ -98,6 +100,7 @@ def print_human_output(output: dict[str, Any]) -> None:
     security = dict(snapshot.get("security") or {})
     contract = dict(snapshot.get("contract") or {})
     holders = dict(snapshot.get("holders") or {})
+    gmgn = dict(dict(snapshot.get("intelligence") or {}).get("gmgn") or {})
     nansen = dict(dict(snapshot.get("intelligence") or {}).get("nansen") or {})
 
     symbol = market.get("base_token_symbol") or analysis.get("symbol") or "UNKNOWN"
@@ -138,6 +141,16 @@ def print_human_output(output: dict[str, Any]) -> None:
     print(f"Hidden Owner: {_value(contract.get('hidden_owner'))}")
     print(f"Holder Count: {_integer(holders.get('holder_count'))}")
     print(f"Security Sources: {_sources(security)}")
+
+    print("")
+    print("GMGN")
+    print(f"Wallet Signal: {_value(gmgn.get('has_wallet_signal'))}")
+    print(f"Top Holders: {_integer(gmgn.get('top_holder_count'))}")
+    print(f"Top Traders: {_integer(gmgn.get('top_trader_count'))}")
+    print(f"Smart Wallets: {_integer(gmgn.get('smart_wallet_count'))}")
+    print(f"Snipers: {_integer(gmgn.get('sniper_count'))}")
+    print(f"Insiders: {_integer(gmgn.get('insider_count'))}")
+    print(f"Bundled Wallets: {_integer(gmgn.get('bundled_wallet_count'))}")
 
     print("")
     print("Nansen")
