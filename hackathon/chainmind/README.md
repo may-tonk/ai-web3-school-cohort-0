@@ -43,6 +43,7 @@ ChainMind 暂不定位为 AI 自动投资机器人，也不做普通行情看板
 | `docs/risks/08-risks-and-mitigations.md` | 可能遇到的困难、误判风险、对应解决方法 |
 | `docs/references/09-references.md` | 参考资料、API、论文和产品方法论链接 |
 | `docs/engineering/10-directory-guide.md` | 工程目录职责说明 |
+| `docs/engineering/11-phase-file-map.md` | 按阶段查找对应代码、脚本、测试、实验和文档 |
 | `docs/learning/` | 复盘学习、规则校正、Hermes 学习边界相关文档 |
 
 ## 推荐阅读顺序
@@ -53,3 +54,4 @@ ChainMind 暂不定位为 AI 自动投资机器人，也不做普通行情看板
 4. 写 Dune 查询时读 `docs/data/05-dune-analysis-playbook.md`。
 5. 接 Hermes 和 AI 报告时读 `docs/operations/06-ai-hermes-reporting.md`。
 6. 做计划和复盘时读 `docs/roadmap/07-mvp-roadmap.md`、`docs/roadmap/08-execution-plan.md`、`docs/risks/08-risks-and-mitigations.md` 与 `docs/learning/`。
+7. 如果想按阶段查找代码和文档，读 `docs/engineering/11-phase-file-map.md`。
