@@ -5,6 +5,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
+from chainmind.domain.token_profile import infer_token_profile
+
 
 @dataclass(frozen=True)
 class TokenSnapshot:
@@ -20,9 +22,14 @@ class TokenSnapshot:
     contract: dict[str, Any] = field(default_factory=dict)
     intelligence: dict[str, Any] = field(default_factory=dict)
     data_quality: dict[str, Any] = field(default_factory=dict)
+    token_profile: dict[str, Any] = field(default_factory=dict)
 
     @classmethod
     def from_mapping(cls, payload: dict[str, Any]) -> "TokenSnapshot":
+        token_profile = dict(payload.get("token_profile") or {})
+        if not token_profile:
+            token_profile = infer_token_profile(payload)
+
         return cls(
             token=dict(payload.get("token", {})),
             market=dict(payload.get("market", {})),
@@ -34,6 +41,7 @@ class TokenSnapshot:
             contract=dict(payload.get("contract", {})),
             intelligence=dict(payload.get("intelligence", {})),
             data_quality=dict(payload.get("data_quality", {})),
+            token_profile=token_profile,
         )
 
     @property
@@ -47,6 +55,10 @@ class TokenSnapshot:
     @property
     def chain(self) -> str:
         return str(self.token.get("chain", "bnb"))
+
+    @property
+    def profile_type(self) -> str:
+        return str(self.token_profile.get("type", "meme_candidate"))
 
 
 @dataclass(frozen=True)

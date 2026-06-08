@@ -11,6 +11,7 @@ from chainmind.data.api_mappers import (
     map_goplus_token_security,
     map_honeypot_status,
 )
+from chainmind.domain import infer_token_profile
 from chainmind.orchestration.analyze_dune_token import (
     build_honeypot_client_from_env,
     build_market_client_from_env,
@@ -100,6 +101,7 @@ def quick_screen_token(
         except Exception as exc:  # noqa: BLE001 - quick screen should use partial data.
             _append_warning(snapshot, f"BNB RPC failed: {exc}")
 
+    snapshot["token_profile"] = infer_token_profile(snapshot)
     screen = quick_screen_decision(snapshot)
     return QuickScreenTokenResult(
         token_address=token_address,

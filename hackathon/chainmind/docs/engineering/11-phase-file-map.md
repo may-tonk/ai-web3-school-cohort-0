@@ -568,21 +568,67 @@ blocked and recorded as neutral evidence.
 ### Status
 
 ```text
-Not started
+Phase 5A implemented: deterministic Markdown report generation
+Phase 5B implemented: token_profile interpretation boundary
+Phase 5C implemented: AI explanation prompt packet
+Phase 5 completed
 ```
 
-### Planned Files
+### Main Purpose
+
+Turn structured analysis output into an evidence-only Markdown report before
+adding AI explanation or Hermes push surfaces.
+
+### Main Docs
 
 ```text
-src/chainmind/reports/
-config/prompts.yaml
-runtime/reports/
-```
-
-### Related Docs
-
-```text
+docs/progress/2026-06-08-phase5a-report-generation-plan.md
+docs/progress/2026-06-08-phase5a-report-generation-check-report.md
+docs/progress/2026-06-08-phase5b-token-profile-plan.md
+docs/progress/2026-06-08-phase5b-token-profile-check-report.md
+docs/progress/2026-06-08-phase5c-ai-explanation-prompt-plan.md
+docs/progress/2026-06-08-phase5-completion-report.md
 docs/operations/06-ai-hermes-reporting.md
+```
+
+### Main Code
+
+```text
+src/chainmind/reports/__init__.py
+src/chainmind/reports/token_report.py
+src/chainmind/reports/report_prompt.py
+src/chainmind/domain/token_profile.py
+src/chainmind/domain/token_snapshot.py
+```
+
+### Main Scripts
+
+```text
+scripts/analyze_dune_token.py
+```
+
+### Main Tests
+
+```text
+tests/unit/test_token_report.py
+tests/unit/test_token_profile.py
+tests/unit/test_report_prompt.py
+```
+
+### Main Output
+
+```text
+analyze_dune_token --report-output PATH
+analyze_dune_token --ai-prompt-output PATH
+```
+
+### Known Limits
+
+```text
+Reports are deterministic Markdown only.
+AI explanation prompt packets are generated, but model calls are not implemented.
+Hermes output is not implemented.
+token_profile is context only and does not override scoring.
 ```
 
 ## Phase 6: Hermes Push Interface
@@ -637,6 +683,9 @@ src/chainmind/reports/review_report.py
 | Entity clustering | `src/chainmind/scoring/entity_cluster.py` | Phase 3 |
 | Data quality | `src/chainmind/scoring/data_quality.py` | Phase 3 |
 | Copyability v0 | `src/chainmind/scoring/copyability.py` | Phase 4A |
+| Markdown report generation | `src/chainmind/reports/token_report.py` | Phase 5A |
+| Token interpretation profile | `src/chainmind/domain/token_profile.py` | Phase 5B |
+| AI explanation prompt packet | `src/chainmind/reports/report_prompt.py` | Phase 5C |
 | Full analysis result | `src/chainmind/domain/token_snapshot.py` | Phase 2, expanded in Phase 3/4A |
 | Main token analysis flow | `src/chainmind/orchestration/analyze_token.py` | Phase 2, expanded in Phase 3/4A |
 
@@ -645,7 +694,7 @@ src/chainmind/reports/review_report.py
 | Script | Purpose | Main Phase |
 |---|---|---|
 | `scripts/analyze_token.py` | Basic token analysis entry | Phase 2 |
-| `scripts/analyze_dune_token.py` | Dune-backed deep analysis | Phase 3, upgraded in Phase 4A |
+| `scripts/analyze_dune_token.py` | Dune-backed deep analysis and optional Markdown report output | Phase 3, upgraded in Phase 4A/5A |
 | `scripts/quick_screen_token.py` | Low-latency API/RPC quick screen | Phase 3 |
 | `scripts/batch_analyze_tokens.py` | Batch Dune-backed analysis | Phase 3, upgraded in Phase 4A |
 | `scripts/smoke_test_apis.py` | API health check | Phase 3 |
@@ -656,8 +705,8 @@ src/chainmind/reports/review_report.py
 python -m pytest
 ```
 
-Latest known result after Phase 4A:
+Latest known result after Phase 5:
 
 ```text
-75 passed
+93 passed
 ```

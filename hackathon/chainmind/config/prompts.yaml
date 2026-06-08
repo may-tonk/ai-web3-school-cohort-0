@@ -1,0 +1,20 @@
+# ChainMind prompt templates.
+#
+# Phase 5C intentionally stores prompt boundaries here for review, while the
+# executable prompt packet is built by src/chainmind/reports/report_prompt.py.
+
+token_report_explanation:
+  version: phase5c-ai-explanation-prompt-v1
+  role: evidence_explainer
+  boundaries:
+    - Explain only structured ChainMind evidence.
+    - Do not invent token facts, wallet behavior, liquidity values, or security properties.
+    - Do not replace the rule engine.
+    - Do not provide execution instructions, position sizing, targets, or stop instructions.
+  required_sections:
+    - Conclusion
+    - Opportunity Sources
+    - Main Risks
+    - Copyability
+    - Follow-up Watch Conditions
+    - Uncertainty

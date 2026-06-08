@@ -27,6 +27,7 @@ from chainmind.orchestration.analyze_dune_token import (
     build_security_client_from_env,
     load_query_set_from_env,
 )
+from chainmind.reports import generate_ai_explanation_prompt, generate_token_report
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -40,6 +41,16 @@ def build_parser() -> argparse.ArgumentParser:
         "--save-snapshot",
         type=Path,
         help="Optional path to save the generated TokenSnapshot JSON.",
+    )
+    parser.add_argument(
+        "--report-output",
+        type=Path,
+        help="Optional path to save a deterministic Markdown analysis report.",
+    )
+    parser.add_argument(
+        "--ai-prompt-output",
+        type=Path,
+        help="Optional path to save an AI-ready evidence explanation prompt JSON.",
     )
     parser.add_argument(
         "--cache-dir",
@@ -85,6 +96,29 @@ def main(argv: Sequence[str] | None = None) -> int:
         )
 
     output = result.to_mapping()
+
+    report = None
+    if args.report_output or args.ai_prompt_output:
+        report = generate_token_report(
+            snapshot=output["snapshot"],
+            analysis=output["analysis"],
+        )
+
+    if args.report_output:
+        args.report_output.parent.mkdir(parents=True, exist_ok=True)
+        args.report_output.write_text(report, encoding="utf-8")
+
+    if args.ai_prompt_output:
+        prompt = generate_ai_explanation_prompt(
+            snapshot=output["snapshot"],
+            analysis=output["analysis"],
+            report_markdown=report,
+        )
+        args.ai_prompt_output.parent.mkdir(parents=True, exist_ok=True)
+        args.ai_prompt_output.write_text(
+            json.dumps(prompt, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
 
     if args.json:
         print(json.dumps(output, ensure_ascii=False, indent=2))

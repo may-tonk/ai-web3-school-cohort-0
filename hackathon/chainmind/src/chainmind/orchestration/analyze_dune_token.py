@@ -25,7 +25,7 @@ from chainmind.data.goplus_client import GoPlusClient
 from chainmind.data.honeypot_client import HoneypotClient
 from chainmind.data.nansen_client import NansenClient
 from chainmind.data.query_cache import DuneQueryCache
-from chainmind.domain import AnalysisResult, TokenSnapshot
+from chainmind.domain import AnalysisResult, TokenSnapshot, infer_token_profile
 from chainmind.orchestration.analyze_token import analyze_token
 
 
@@ -174,6 +174,7 @@ def analyze_dune_token(
         rpc_client=rpc_client,
         log=log,
     )
+    snapshot_payload["token_profile"] = infer_token_profile(snapshot_payload)
 
     analysis = analyze_token(TokenSnapshot.from_mapping(snapshot_payload))
     return DuneTokenAnalysisResult(snapshot=snapshot_payload, analysis=analysis)
