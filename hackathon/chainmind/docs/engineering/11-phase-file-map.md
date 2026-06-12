@@ -636,16 +636,76 @@ token_profile is context only and does not override scoring.
 ### Status
 
 ```text
-Not started
+Phase 6A completed: Hermes-friendly JSON / Markdown output
+Phase 6B completed: cooldown and multi-token digest
+Database-backed alerts are not started
 ```
 
-### Planned Files
+### Main Purpose
+
+Let Hermes consume ChainMind analysis results through a stable payload instead
+of parsing console text.
+
+### Main Docs
+
+```text
+docs/progress/2026-06-12-phase6a-hermes-output-report.md
+docs/progress/2026-06-12-phase6b-cooldown-digest-report.md
+docs/operations/06-ai-hermes-reporting.md
+```
+
+### Main Code
 
 ```text
 src/chainmind/alerts/alert_policy.py
 src/chainmind/alerts/cooldown.py
 src/chainmind/alerts/digest_builder.py
 src/chainmind/alerts/channels/hermes.py
+scripts/analyze_dune_token.py
+scripts/build_hermes_digest.py
+```
+
+### Main Tests
+
+```text
+tests/unit/test_alert_policy.py
+tests/unit/test_cooldown.py
+tests/unit/test_digest_builder.py
+tests/unit/test_hermes_payload.py
+tests/unit/test_analyze_dune_token_script.py
+tests/unit/test_build_hermes_digest_script.py
+```
+
+### Main Output
+
+```text
+analyze_dune_token --hermes-output PATH
+analyze_dune_token --cooldown-state PATH --cooldown-write
+build_hermes_digest.py PAYLOAD... --output PATH
+```
+
+### Output Fields
+
+```text
+should_send
+delivery_level
+delivery_reason
+summary
+telegram_markdown
+report_markdown
+ai_prompt
+snapshot
+analysis
+```
+
+### Known Limits
+
+```text
+Hermes payload generation is file/output only.
+No database writes are implemented.
+No Telegram API calls are implemented.
+Cooldown state is JSON-file backed only.
+Multi-token digest composition is file/input-output only.
 ```
 
 ## Phase 7+: Radar, Watchlist, Review, Learning
@@ -686,6 +746,10 @@ src/chainmind/reports/review_report.py
 | Markdown report generation | `src/chainmind/reports/token_report.py` | Phase 5A |
 | Token interpretation profile | `src/chainmind/domain/token_profile.py` | Phase 5B |
 | AI explanation prompt packet | `src/chainmind/reports/report_prompt.py` | Phase 5C |
+| Hermes payload output | `src/chainmind/alerts/channels/hermes.py` | Phase 6A |
+| Alert delivery policy | `src/chainmind/alerts/alert_policy.py` | Phase 6A |
+| Cooldown suppression | `src/chainmind/alerts/cooldown.py` | Phase 6B |
+| Hermes digest output | `src/chainmind/alerts/digest_builder.py` | Phase 6B |
 | Full analysis result | `src/chainmind/domain/token_snapshot.py` | Phase 2, expanded in Phase 3/4A |
 | Main token analysis flow | `src/chainmind/orchestration/analyze_token.py` | Phase 2, expanded in Phase 3/4A |
 
@@ -695,6 +759,7 @@ src/chainmind/reports/review_report.py
 |---|---|---|
 | `scripts/analyze_token.py` | Basic token analysis entry | Phase 2 |
 | `scripts/analyze_dune_token.py` | Dune-backed deep analysis and optional Markdown report output | Phase 3, upgraded in Phase 4A/5A |
+| `scripts/build_hermes_digest.py` | Build a digest payload from Hermes token payload files | Phase 6B |
 | `scripts/quick_screen_token.py` | Low-latency API/RPC quick screen | Phase 3 |
 | `scripts/batch_analyze_tokens.py` | Batch Dune-backed analysis | Phase 3, upgraded in Phase 4A |
 | `scripts/smoke_test_apis.py` | API health check | Phase 3 |
@@ -705,8 +770,8 @@ src/chainmind/reports/review_report.py
 python -m pytest
 ```
 
-Latest known result after Phase 5:
+Latest known result after Phase 6B:
 
 ```text
-93 passed
+109 passed
 ```

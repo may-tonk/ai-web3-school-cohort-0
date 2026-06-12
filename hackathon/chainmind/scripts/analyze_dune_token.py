@@ -15,6 +15,12 @@ if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
 from chainmind.data.env import load_dotenv
+from chainmind.alerts.channels import build_hermes_payload
+from chainmind.alerts.cooldown import (
+    apply_cooldown,
+    load_cooldown_state,
+    save_cooldown_state,
+)
 from chainmind.orchestration.analyze_dune_token import (
     DuneTokenAnalysisConfig,
     analyze_dune_token,
@@ -53,6 +59,21 @@ def build_parser() -> argparse.ArgumentParser:
         help="Optional path to save an AI-ready evidence explanation prompt JSON.",
     )
     parser.add_argument(
+        "--hermes-output",
+        type=Path,
+        help="Optional path to save a Hermes-ready alert payload JSON.",
+    )
+    parser.add_argument(
+        "--cooldown-state",
+        type=Path,
+        help="Optional JSON file used to suppress repeated Hermes alerts.",
+    )
+    parser.add_argument(
+        "--cooldown-write",
+        action="store_true",
+        help="Persist cooldown state when --cooldown-state is provided.",
+    )
+    parser.add_argument(
         "--cache-dir",
         type=Path,
         default=PROJECT_ROOT / "experiments" / "week2-token-risk-score" / "dune-query-cache",
@@ -68,6 +89,9 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
+    if args.cooldown_write and not args.cooldown_state:
+        raise SystemExit("--cooldown-write requires --cooldown-state.")
+
     load_dotenv(PROJECT_ROOT / ".env")
 
     result = analyze_dune_token(
@@ -98,7 +122,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     output = result.to_mapping()
 
     report = None
-    if args.report_output or args.ai_prompt_output:
+    if args.report_output or args.ai_prompt_output or args.hermes_output:
         report = generate_token_report(
             snapshot=output["snapshot"],
             analysis=output["analysis"],
@@ -108,15 +132,41 @@ def main(argv: Sequence[str] | None = None) -> int:
         args.report_output.parent.mkdir(parents=True, exist_ok=True)
         args.report_output.write_text(report, encoding="utf-8")
 
-    if args.ai_prompt_output:
+    prompt = None
+    if args.ai_prompt_output or args.hermes_output:
         prompt = generate_ai_explanation_prompt(
             snapshot=output["snapshot"],
             analysis=output["analysis"],
             report_markdown=report,
         )
+
+    if args.ai_prompt_output:
         args.ai_prompt_output.parent.mkdir(parents=True, exist_ok=True)
         args.ai_prompt_output.write_text(
             json.dumps(prompt, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+
+    if args.hermes_output:
+        hermes_payload = build_hermes_payload(
+            snapshot=output["snapshot"],
+            analysis=output["analysis"],
+            report_markdown=report,
+            ai_prompt=prompt,
+        )
+        if args.cooldown_state:
+            cooldown_state = load_cooldown_state(args.cooldown_state)
+            hermes_payload, cooldown_state = apply_cooldown(
+                hermes_payload,
+                cooldown_state,
+                update_state=args.cooldown_write,
+            )
+            if args.cooldown_write:
+                save_cooldown_state(args.cooldown_state, cooldown_state)
+
+        args.hermes_output.parent.mkdir(parents=True, exist_ok=True)
+        args.hermes_output.write_text(
+            json.dumps(hermes_payload, ensure_ascii=False, indent=2),
             encoding="utf-8",
         )
 

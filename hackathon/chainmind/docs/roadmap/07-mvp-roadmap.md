@@ -109,34 +109,99 @@ chainmind/scoring/entity_cluster.py
 chainmind/scoring/copyability.py
 ```
 
-## Phase 5：AI Report + Hermes 推送
+## Phase 5：报告生成 + AI 解释 Prompt
 
 目标：
 
 ```text
-将评分结果变成可读报告和分级推送
+将评分结果变成可读研究报告，并生成可交给 AI 解释层使用的 prompt packet
 ```
 
 输出：
 
 ```text
 A/B/C/D 等级
+处理建议
 机会来源
 风险来源
 是否可复制
 是否疑似同实体
 后续观察条件
 不确定性
+AI 解释 prompt packet
 ```
 
 产出：
 
 ```text
-chainmind/reports/template.md
-Hermes 推送任务
+src/chainmind/reports/token_report.py
+src/chainmind/reports/report_prompt.py
+config/prompts.yaml
 ```
 
-## Phase 6：每日复盘系统
+完成标志：
+
+```text
+analyze_dune_token 可以生成确定性 Markdown 报告
+analyze_dune_token 可以生成 AI-ready prompt JSON
+报告和 prompt 不调用模型、不编造事实、不输出交易指令
+```
+
+## Phase 6：Hermes 推送接口
+
+目标：
+
+```text
+让 ChainMind 能被 Hermes 自动触发和推送
+脚本输出 Hermes 可读取的 JSON / Markdown，而不是让 Hermes 解析控制台文本
+```
+
+第一版推送规则：
+
+```text
+A：即时推送
+B：进入摘要 / 观察列表
+C：只记录
+D：过滤
+```
+
+产出：
+
+```text
+src/chainmind/alerts/alert_policy.py
+src/chainmind/alerts/cooldown.py
+src/chainmind/alerts/digest_builder.py
+src/chainmind/alerts/channels/hermes.py
+scripts/analyze_dune_token.py --hermes-output PATH
+scripts/build_hermes_digest.py
+```
+
+完成标志：
+
+```text
+Hermes 调用脚本后，可以拿到 should_send、delivery_level、grade、summary、telegram_markdown、report_markdown
+Hermes 可以用 cooldown state 抑制重复推送
+多个 B/watchlist payload 可以合成 digest
+```
+
+## Phase 7：雷达扫描与 Watchlist
+
+目标：
+
+```text
+让系统能主动发现候选 token，并支持指定 token / wallet 的观察任务
+```
+
+产出：
+
+```text
+src/chainmind/realtime/
+src/chainmind/orchestration/radar_scan.py
+src/chainmind/orchestration/watch_token.py
+src/chainmind/orchestration/watch_wallet.py
+```
+
+## Phase 8：每日复盘系统
 
 目标：
 
@@ -156,7 +221,7 @@ AI 结论等级
 15m / 1h / 6h / 24h 最大涨幅
 15m / 1h / 6h / 24h 最大回撤
 是否 rug
-是否出现可执行入场窗口
+是否出现可执行观察窗口
 ```
 
 ## 短期优先级
@@ -170,5 +235,6 @@ P2：Wallet Alpha Score
 P2：Copyability Score
 P3：自动化 API 管道
 P3：Hermes 实时推送
+P4：每日复盘与规则校正
 ```
 
